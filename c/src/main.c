@@ -58,10 +58,10 @@ void interpret(const Vec code, const Vec tape) {
     while (ci < code.len && ti < tape.len) {
         switch (VEC_AT(char, code, ci)) {
         case '>':
-            ++ti;
+            ti = (ti + 1) % tape.len;
             break;
         case '<':
-            --ti;
+            ti = (ti - 1) % tape.len;
             break;
         case '+':
             ++VEC_AT(char, tape, ti);
@@ -71,25 +71,42 @@ void interpret(const Vec code, const Vec tape) {
             break;
         case '.':
             putchar(VEC_AT(char, tape, ti));
-            fflush(stdout);
             break;
-        case ',':
-            VEC_AT(char, tape, ti) = getchar();
+        case ',': {
+            int chr = getchar();
+            VEC_AT(char, tape, ti) = chr;
             break;
+        }
         case '[':
             if (VEC_AT(char, tape, ti)) {
                 break;
             }
-            while (ci < code.len && VEC_AT(char, code, ci) != ']') {
-                ++ci;
+            for (size_t i = 1; i && ++ci < code.len; ) {
+                switch (VEC_AT(char, code, ci))
+                {
+                case '[':
+                    ++i;
+                    break;
+                case ']':
+                    --i;
+                    break;
+                }
             }
             break;
         case ']':
             if (!VEC_AT(char, tape, ti)) {
                 break;
             }
-            while (ci < code.len && VEC_AT(char, code, ci) != '[') {
-                --ci;
+            for (size_t i = 1; i && --ci < code.len; ) {
+                switch (VEC_AT(char, code, ci))
+                {
+                case '[':
+                    --i;
+                    break;
+                case ']':
+                    ++i;
+                    break;
+                }
             }
             break;
         }
