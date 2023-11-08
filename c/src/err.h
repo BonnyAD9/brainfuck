@@ -1,0 +1,48 @@
+#ifndef ERR_H_INCLUDED
+#define ERR_H_INCLUDED
+
+#include <stdio.h> // fprintf, stderr
+
+/// No error code
+#define NO_ERROR 0
+/// Generic error code
+#define GENERIC_ERR -1
+/// Failed to allocate
+#define FAILED_ALLOC -2
+
+/// True if any error occured, otherwise false. Clears the error
+#define POP_ERR (pop_err() != NO_ERROR)
+/// False if any error occured, otherwise true. Clears the error
+#define POP_OK (pop_err() == NO_ERROR)
+
+/// True if any error occured, otherwise false.
+#define IS_ERR (get_err() != NO_ERROR)
+/// False if any error occured, otherwise true.
+#define IS_OK (get_err() != NO_ERROR)
+
+/// Prints to the stderr, also adds newline
+#define EPRINTF(fmt, ...) fprintf(stderr, fmt "\n" ,##__VA_ARGS__)
+
+/// clears the error
+void clear_err(void);
+
+/// returns the last error code and clears the error. The returned msg is never
+/// NULL.
+int pop_err(const char **msg);
+
+/// Sets the error to a generic error
+void set_err(void);
+
+/// Sets the error message. The msg must be static string.
+void set_err_msg(int code, const char *msg);
+
+/// Gets the error code-
+int get_err(void);
+
+/// Gets the error message. This is never NULL.
+const char *get_err_msg(void);
+
+/// If there is error prints it. Returns the error code.
+int print_err(void);
+
+#endif // ERR_H_INCLUDED
