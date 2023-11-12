@@ -26,6 +26,13 @@ bool vec_push(Vec *vec, const void *item) {
     return true;
 }
 
+void *vec_pop(Vec *vec) {
+    if (vec->len == 0) {
+        return NULL;
+    }
+    return vec_at(*vec, --vec->len);
+}
+
 void *vec_at(const Vec vec, size_t index) {
     return vec.data + vec.item_size * index;
 }
@@ -49,7 +56,7 @@ bool vec_reserve(Vec *vec, size_t count) {
         new_alloc *= 2;
     }
 
-    char *new_data = realloc(vec->data, new_alloc);
+    char *new_data = realloc(vec->data, vec->item_size * new_alloc);
     if (!new_data) {
         return vec_err();
     }

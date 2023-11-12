@@ -8,7 +8,7 @@
 #define VEC_NEW(type) ((Vec) { .item_size = sizeof(type) })
 
 /// l-value of vector at the given index
-#define VEC_AT(type, vec, index) ((vec).data[index])
+#define VEC_AT(type, vec, index) (((type *)(vec).data)[index])
 
 /// Pushes new value to the vector
 #define VEC_PUSH(type, vec, value) do { \
@@ -18,6 +18,9 @@
             ++__vec->len; \
         } \
     } while (0)
+
+/// Returns the last item from the vector, and removes it.
+#define VEC_POP(type, vec) (*(type *)vec_pop(vec))
 
 /// Makes the vector size so that it can hold exactly the given number of items
 /// and fills the new items (if any) with the value of `item`
@@ -42,6 +45,10 @@ Vec vec_new(size_t item_size);
 
 /// Appends value to the vector
 bool vec_push(Vec *vec, const void *item);
+
+/// Returns the last item from the vector, and removes it.
+/// Returns null if vector is empty.
+void *vec_pop(Vec *vec);
 
 /// Gets pointer to value at the given index
 void *vec_at(const Vec vec, size_t index);

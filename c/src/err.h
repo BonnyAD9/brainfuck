@@ -11,7 +11,7 @@
 #define FAILED_ALLOC -2
 
 /// True if any error occured, otherwise false. Clears the error
-#define POP_ERR (pop_err() != NO_ERROR)
+#define POP_ERR (pop_err(NULL) != NO_ERROR)
 /// False if any error occured, otherwise true. Clears the error
 #define POP_OK (pop_err() == NO_ERROR)
 
@@ -22,6 +22,9 @@
 
 /// Prints to the stderr, also adds newline
 #define EPRINTF(fmt, ...) fprintf(stderr, fmt "\n" ,##__VA_ARGS__)
+
+/// If error is set, jump to the given label.
+#define EPROP(ret) if (IS_ERR) goto ret
 
 /// clears the error
 void clear_err(void);
