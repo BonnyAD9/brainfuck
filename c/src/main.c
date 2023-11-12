@@ -19,8 +19,9 @@ int main(int argc, char **argv) {
     }
 
     Vec code = VEC_NEW(Instruction);
+    InstructionStream is = inst_s_new(f);
 
-    read_instructions(f, &code);
+    read_instructions(&is, &code);
     if (IS_ERR) {
         fclose(f);
         vec_free(&code);
