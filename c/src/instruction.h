@@ -29,17 +29,20 @@ typedef struct {
     long jump; // relative jump offset
 } Instruction;
 
+typedef Instruction (*InstructionStreamNextFun)(void *data);
+typedef void (*FreeFun)(void *data);
+
 typedef struct {
-    FILE *in;
+    void *data;
+    InstructionStreamNextFun next;
+    FreeFun free;
 } InstructionStream;
 
 Instruction instruction_new(long move, long add, InstFlags flags, long jump);
 
-InstructionStream inst_s_new(FILE *in);
-
-Instruction inst_s_next(InstructionStream *is);
+InstructionStream inst_s_file(FILE *in, bool free);
 
 /// Loads instructions from stream `is` into vector `out`
-bool read_instructions(InstructionStream *is, Vec *out);
+bool read_instructions(InstructionStream is, Vec *out);
 
 #endif // INSTRUCTION_H_INCLUDED

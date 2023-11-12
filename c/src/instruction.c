@@ -6,6 +6,9 @@
 #include "vec.h" // Vec, VEC_NEW, VEC_PUSH
 #include "err.h" // set_err_msg, GENERIC_ERR, EPROP
 
+static Instruction inst_s_file_next(FILE *in);
+static void noop(void *) {};
+
 Instruction instruction_new(long move, long add, InstFlags flags, long jump) {
     return (Instruction) {
         .move = move,
@@ -15,44 +18,19 @@ Instruction instruction_new(long move, long add, InstFlags flags, long jump) {
     };
 }
 
-InstructionStream inst_s_new(FILE *in) {
+InstructionStream inst_s_file(FILE *in, bool free) {
     return (InstructionStream) {
-        .in = in,
+        .data = in,
+        .next = (InstructionStreamNextFun)inst_s_file_next,
+        .free = free ? (FreeFun)fclose : noop,
     };
 }
 
-Instruction inst_s_next(InstructionStream *is) {
-    int cur;
-
-    while ((cur = fgetc(is->in)) != EOF) {
-        switch (cur) {
-        case '>':
-            return instruction_new(1, 0, INST_MOVE, 0);
-        case '<':
-            return instruction_new(-1, 0, INST_MOVE, 0);
-        case '+':
-            return instruction_new(0, 1, INST_ADD, 0);
-        case '-':
-            return instruction_new(0, -1, INST_ADD, 0);
-        case '.':
-            return instruction_new(0, 0, INST_PRINT, 0);
-        case ',':
-            return instruction_new(0, 0, INST_READ, 0);
-        case '[':
-            return instruction_new(0, 0, INST_FORW, 0);
-        case ']':
-            return instruction_new(0, 0, INST_BACK, 0);
-        }
-    }
-
-    return instruction_new(0, 0, INST_HALT, 0);
-}
-
-bool read_instructions(InstructionStream *is, Vec *out) {
+bool read_instructions(InstructionStream is, Vec *out) {
     Vec jumps = VEC_NEW(long);
 
     Instruction cur;
-    while (!((cur = inst_s_next(is)).flags & INST_HALT)) {
+    while (!((cur = is.next(is.data)).flags & INST_HALT)) {
         if (!(cur.flags & INST_JUMP)) {
             VEC_PUSH(Instruction, out, cur);
             EPROP(on_err);
@@ -85,9 +63,38 @@ bool read_instructions(InstructionStream *is, Vec *out) {
     }
 
     vec_free(&jumps);
+    is.free(is.data);
     return true;
 
 on_err:
     vec_free(&jumps);
+    is.free(is.data);
     return false;
+}
+
+static Instruction inst_s_file_next(FILE *in) {
+    int cur;
+
+    while ((cur = fgetc(in)) != EOF) {
+        switch (cur) {
+        case '>':
+            return instruction_new(1, 0, INST_MOVE, 0);
+        case '<':
+            return instruction_new(-1, 0, INST_MOVE, 0);
+        case '+':
+            return instruction_new(0, 1, INST_ADD, 0);
+        case '-':
+            return instruction_new(0, -1, INST_ADD, 0);
+        case '.':
+            return instruction_new(0, 0, INST_PRINT, 0);
+        case ',':
+            return instruction_new(0, 0, INST_READ, 0);
+        case '[':
+            return instruction_new(0, 0, INST_FORW, 0);
+        case ']':
+            return instruction_new(0, 0, INST_BACK, 0);
+        }
+    }
+
+    return instruction_new(0, 0, INST_HALT, 0);
 }

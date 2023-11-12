@@ -7,5 +7,5 @@ The implementations are tested with the code in `speed-test.b` on the input in
 `input`. The program is bubble sort.
 
 ## C
-- Time: 10.815422695s
-- Memory: 1.250 MiB
+- Time: 4.21422032s
+- Memory: 1.375 MiB
