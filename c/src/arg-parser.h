@@ -11,6 +11,7 @@ typedef enum {
 typedef struct {
     ArgAction action;
     char *file;
+    char *output;
     size_t tape_size;
     int print_info: 1;
     int print_help: 1;

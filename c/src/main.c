@@ -10,7 +10,10 @@
 #include "arg-parser.h"    // Args, arg_parse, args_print
 #include "c-transpiler.h"  // c_transpile
 
+void handle_interpret(const Vec code, Args *args);
+void handle_transpile(const Vec code, Args *args);
 void print_info(FILE *out, Args *args, Vec *tape);
+void must(Args *args);
 void help(void);
 
 int main(int argc, char **argv) {
@@ -29,26 +32,20 @@ int main(int argc, char **argv) {
 
     FILE *f = fopen(args.file, "r");
     if (!f) {
-        if (args.print_info) {
-            print_info(stdout, &args, NULL);
-        }
+        must(&args);
         return print_err("Cannot open file '%s'", args.file);
     }
 
     InstructionStream is = o_acc_stream(inst_s_file(f, true));
     if (IS_ERR) {
-        if (args.print_info) {
-            print_info(stdout, &args, NULL);
-        }
+        must(&args);
         return print_err(NULL);
     }
 
     Vec code = VEC_NEW(Instruction);
     read_instructions(is, &code);
     if (IS_ERR) {
-        if (args.print_info) {
-            print_info(stdout, &args, &code);
-        }
+        must(&args);
         vec_free(&code);
         return print_err(NULL);
     }
@@ -57,19 +54,36 @@ int main(int argc, char **argv) {
         print_info(stdout, &args, &code);
     }
 
-    Vec tape = VEC_NEW(char);
     switch (args.action) {
     case INTERPRET:
-        VEC_EXTEND_EXACT(char, &tape, args.tape_size, 0);
-        interpret(code, &tape);
+        handle_interpret(code, &args);
         break;
     case TRANSPILE:
-        c_transpile(stdout, code, args.tape_size);
+        handle_transpile(code, &args);
         break;
     }
 
     vec_free(&code);
-    vec_free(&tape);
+}
+
+void handle_interpret(const Vec code, Args *args) {
+    if (args->output) {
+        WPRINTF("Unused argument '-o'");
+    }
+
+    Vec tape = VEC_NEW(char);
+    VEC_EXTEND_EXACT(char, &tape, args->tape_size, 0);
+
+    interpret(code, &tape);
+}
+
+void handle_transpile(const Vec code, Args *args) {
+    FILE *output = args->output ? fopen(args->output, "w") : stdout;
+    if (IS_ERR) {
+        print_err("Failed to open file '%s' for writing.", args->output);
+    }
+
+    c_transpile(output, code, args->tape_size);
 }
 
 void print_info(FILE *out, Args *args, Vec *code) {
@@ -82,11 +96,17 @@ void print_info(FILE *out, Args *args, Vec *code) {
     );
 }
 
+void must(Args *args) {
+    if (args->print_info) {
+        print_info(stdout, args, NULL);
+    }
+}
+
 void help(void) {
     printf(
         "Welcome in help for " SET_ITALIC FG_GREEN "C brainfuck" RESET
         " by %s.\n"
-        FG_GREEN "Version:" RESET " 1.0.0\n"
+        FG_GREEN "Version:" RESET " 1.1.0\n"
         "\n"
         FG_GREEN "Usage:\n"
         FG_WHITE "  brainfuck (-? | -h | --help) " FG_DARK_GRAY "[flags]\n"
@@ -103,6 +123,21 @@ void help(void) {
         "\n"
         FG_YELLOW "  --print-info\n" RESET
         "    Print information about the configuration and state.\n"
+        "\n"
+        FG_YELLOW "  -T  --transpile\n" RESET
+        "    Transpile instead of interpret. See " FG_DARK_GREEN "*1 " RESET
+        "and " FG_DARK_YELLOW "-o" RESET "."
+        "\n"
+        FG_YELLOW "  -I  --interpret\n" RESET
+        "    Interpret, this is the default. See " FG_DARK_GREEN "*1."
+        "\n"
+        FG_YELLOW "  -o  --out  --output " FG_WHITE "<file>\n" RESET
+        "    Sets the output file of operation. Stdout by default.\n"
+        "\n"
+        FG_GREEN "*1\n" RESET
+        "  In case that there are multiple flags from the group "
+        FG_DARK_YELLOW "-T" RESET ", " FG_DARK_YELLOW "-I" RESET ",\n"
+        "  the last flag takes effect.\n"
         "\n",
         FG_RGB(250, 50, 170) "B" FG_RGB(240, 50, 180) "o" FG_RGB(230, 50, 190) "n"
         FG_RGB(220, 50, 200) "n" FG_RGB(210, 50, 210) "y" FG_RGB(200, 50, 220) "A"

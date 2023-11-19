@@ -11,6 +11,7 @@ Args arg_parse(char **argv) {
     Args res = {
         .action = INTERPRET,
         .file = NULL,
+        .output = NULL,
         .tape_size = 30000,
         .print_info = 0,
         .print_help = 0,
@@ -31,6 +32,27 @@ Args arg_parse(char **argv) {
             res.print_help = 1;
         } else if (strcmp(*argv, "-T") == 0 || strcmp(*argv, "--transpile") == 0) {
             res.action = TRANSPILE;
+        } else if (strcmp(*argv, "-I") == 0 || strcmp(*argv, "--interpret") == 0) {
+            res.action = INTERPRET;
+        } else if (
+            strcmp(*argv, "-o") == 0 || strcmp(*argv, "--out") == 0
+            || strcmp(*argv, "--output") == 0
+        ) {
+            if (res.output) {
+                set_err_msg(
+                    INVALID_ARGS,
+                    "You can specify only one output file in the arguments."
+                );
+                return res;
+            }
+            res.output = *++argv;
+            if (!res.output) {
+                set_err_msg(
+                    INVALID_ARGS,
+                    "Missing output file after option '-o'."
+                );
+                return res;
+            }
         } else {
             if (res.file) {
                 set_err_msg(

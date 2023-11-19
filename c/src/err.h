@@ -3,6 +3,8 @@
 
 #include <stdio.h> // fprintf, stderr, FILE
 
+#include "ansi-terminal.h" // FG_*, RESET
+
 /// No error code
 #define NO_ERROR 0
 /// Generic error code
@@ -24,6 +26,12 @@
 
 /// Prints to the stderr, also adds newline
 #define EPRINTF(fmt, ...) fprintf(stderr, fmt "\n" ,##__VA_ARGS__)
+
+#define WPRINTF(fmt, ...) fprintf( \
+    stderr, \
+    FG_MAGENTA "warning" RESET ": " fmt "\n" \
+    ,##__VA_ARGS__ \
+)
 
 /// If error is set, jump to the given label.
 #define EPROP(ret) if (IS_ERR) goto ret
