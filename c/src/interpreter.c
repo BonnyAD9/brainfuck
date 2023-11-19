@@ -14,7 +14,8 @@ void interpret(const Vec code, Vec *tape) {
 
         ti += i.move;
 
-        VEC_AT(char, *tape, ti) = (VEC_AT(char, *tape, ti) + i.add) % tape->len;
+        VEC_AT(char, *tape, ti) =
+            (VEC_AT(char, *tape, ti) + i.add) % tape->len;
 
         if (i.flags & INST_PRINT) {
             putchar(VEC_AT(char, *tape, ti));
