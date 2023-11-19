@@ -8,7 +8,7 @@
 #include "ansi-terminal.h" // FG_RED, RESET
 
 static int err_code;
-static const char *err_msg;
+static const char *err_msg = "No error.";
 
 void clear_err(void) {
     err_code = 0;
@@ -97,4 +97,17 @@ int print_err(const char *str, ...) {
     }
 
     return NO_ERROR;
+}
+
+void err_print_info(FILE *out) {
+    fprintf(
+        out,
+        "errors:\n"
+        "  code: %d\n"
+        "  msg: %s\n"
+        "  errno: %d\n",
+        err_code,
+        err_msg,
+        (int)errno
+    );
 }

@@ -1,7 +1,7 @@
 #ifndef ERR_H_INCLUDED
 #define ERR_H_INCLUDED
 
-#include <stdio.h> // fprintf, stderr
+#include <stdio.h> // fprintf, stderr, FILE
 
 /// No error code
 #define NO_ERROR 0
@@ -9,6 +9,8 @@
 #define GENERIC_ERR -1
 /// Failed to allocate
 #define FAILED_ALLOC -2
+/// Invalid command line arguments
+#define INVALID_ARGS -3
 
 /// True if any error occured, otherwise false. Clears the error
 #define POP_ERR (pop_err(NULL) != NO_ERROR)
@@ -47,5 +49,7 @@ const char *get_err_msg(void);
 
 /// If there is error prints it. Returns the error code.
 int print_err(const char *str, ...);
+
+void err_print_info(FILE *out);
 
 #endif // ERR_H_INCLUDED
