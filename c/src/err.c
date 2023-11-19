@@ -56,11 +56,13 @@ int print_err(const char *str, ...) {
             vfprintf(stderr, str, va);
             va_end(va);
 
+            fprintf(stderr, "\n");
+
             return err_code;
         }
         fprintf(
             stderr,
-            FG_RED "error" RESET ": %s",
+            FG_RED "error" RESET ": %s\n",
             err_msg
         );
     }

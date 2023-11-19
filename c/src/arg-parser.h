@@ -7,6 +7,7 @@ typedef struct {
     char *file;
     size_t tape_size;
     int print_info: 1;
+    int print_help: 1;
 } Args;
 
 Args arg_parse(char **argv);

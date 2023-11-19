@@ -6,6 +6,27 @@
 
 #define RESET CSI "0m"
 
+#define SET_BOLD         CSI "1m"
+#define SET_FAINT        CSI "2m"
+#define SET_ITALIC       CSI "3m"
+#define SET_UNDERLINE    CSI "4m"
+#define SET_BLINKING     CSI "5m"
+#define SET_INVERSE      CSI "7m"
+#define SET_HIDDEN       CSI "8m"
+#define SET_STRIKETROUGH CSI "9m"
+
+#define RESET_BOLD         CSI "22m"
+#define RESET_FAINT        CSI "22m"
+#define RESET_ITALIC       CSI "23m"
+#define RESET_UNDERLINE    CSI "24m"
+#define RESET_BLINKING     CSI "25m"
+#define RESET_INVERSE      CSI "27m"
+#define RESET_HIDDEN       CSI "28m"
+#define RESET_STRIKETROUGH CSI "29m"
+
+#define SET_DOUBLE_UNDERLINE   CSI "21m"
+#define RESET_DOUBLE_UNDERLINE CSI "24m"
+
 #define FG_BLACK        CSI "30m"
 #define FG_DARK_RED     CSI "31m"
 #define FG_DARK_GREEN   CSI "32m"
@@ -43,5 +64,8 @@
 #define BG_MAGENTA   CSI "105m"
 #define BG_CYAN      CSI "106m"
 #define BG_WHITE     CSI "107m"
+
+#define FG_RGB(r, g, b) CSI "38;2;" #r ";" #g ";" #b "m"
+#define BG_RGB(r, g, b) CSI "48;2;" #r ";" #g ";" #b "m"
 
 #endif // ANSI_COLORS_H_INCLUDED
