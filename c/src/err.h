@@ -46,6 +46,6 @@ int get_err(void);
 const char *get_err_msg(void);
 
 /// If there is error prints it. Returns the error code.
-int print_err(void);
+int print_err(const char *str, ...);
 
 #endif // ERR_H_INCLUDED

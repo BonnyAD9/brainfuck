@@ -1,6 +1,11 @@
 #include "err.h" // GENERIC_ERR, IS_ERR
 
-#include <stdio.h> // fprintf, stderr
+#include <stdio.h>  // fprintf, stderr, perror, vfprintf
+#include <errno.h>  // errno
+#include <stdarg.h> // va_list, va_start, va_end
+#include <stdlib.h> // EXIT_FAILURE
+
+#include "ansi-terminal.h" // FG_RED, RESET
 
 static int err_code;
 static const char *err_msg;
@@ -8,6 +13,7 @@ static const char *err_msg;
 void clear_err(void) {
     err_code = 0;
     err_msg = "No error.";
+    errno = 0;
 }
 
 int pop_err(const char **msg) {
@@ -30,16 +36,65 @@ void set_err_msg(int code, const char *msg) {
 }
 
 int get_err(void) {
-    return err_code;
+    if (err_code) {
+        return err_code;
+    }
+    return errno;
 }
 
 const char *get_err_msg(void) {
     return err_msg;
 }
 
-int print_err(void) {
-    if (IS_ERR) {
-        fprintf(stderr, "%s (code %d)", err_msg, err_code);
+int print_err(const char *str, ...) {
+    if (err_code) {
+        if (str && *str) {
+            fprintf(stderr, FG_RED "error" RESET ": ");
+
+            va_list va;
+            va_start(va, str);
+            vfprintf(stderr, str, va);
+            va_end(va);
+
+            return err_code;
+        }
+        fprintf(
+            stderr,
+            FG_RED "error" RESET ": %s",
+            err_msg
+        );
     }
-    return err_code;
+
+    if (errno) {
+        if (str && *str) {
+            fprintf(stderr, FG_RED "error" RESET ": ");
+
+            va_list va;
+            va_start(va, str);
+            vfprintf(stderr, str, va);
+            va_end(va);
+
+            fprintf(stderr, ": ");
+
+            perror(NULL);
+        } else {
+            perror(FG_RED "error" RESET);
+        }
+        return errno;
+    }
+
+    if (str && *str) {
+        fprintf(stderr, FG_RED "error" RESET ": ");
+
+        va_list va;
+        va_start(va, str);
+        vfprintf(stderr, str, va);
+        va_end(va);
+
+        fprintf(stderr, "\n");
+
+        return EXIT_FAILURE;
+    }
+
+    return NO_ERROR;
 }
