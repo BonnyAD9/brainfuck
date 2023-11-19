@@ -50,7 +50,19 @@ void c_transpile(FILE *out, const Vec instructions, size_t tape_size) {
 static void transpile_instruction(FILE *out, size_t *indent, Instruction inst) {
     if (inst.move) {
         repeat(out, ' ', *indent);
-        fprintf(out, "idx = (idx + %ld) %% tape_size;\n", inst.move);
+        fprintf(out, "idx += %ld;\n", inst.move);
+        repeat(out, ' ', *indent);
+        fprintf(out, "while (idx >= tape_size) {\n");
+        repeat(out, ' ', *indent + 4);
+        fprintf(out, "idx -= tape_size;\n");
+        repeat(out, ' ', *indent);
+        fprintf(out, "}\n");
+        repeat(out, ' ', *indent);
+        fprintf(out, "while (idx < 0) {\n");
+        repeat(out, ' ', *indent + 4);
+        fprintf(out, "idx += tape_size;\n");
+        repeat(out, ' ', *indent);
+        fprintf(out, "}\n");
     }
 
     if (inst.add) {
