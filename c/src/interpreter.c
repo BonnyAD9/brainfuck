@@ -14,11 +14,14 @@ void interpret(const Vec code, Vec *tape) {
 
         ti += i.move;
         // having theese cycles is actually about 11 times faster than using %
-        while (ti >= tape->len) {
-            ti -= tape->len;
-        }
-        while (ti < 0) {
-            ti += tape->len;
+        if (ti >= tape->len) {
+            do {
+                ti -= tape->len;
+            } while (ti >= tape->len);
+        } else {
+            while (ti < 0) {
+                ti += tape->len;
+            }
         }
 
         VEC_AT(char, *tape, ti) += i.add;

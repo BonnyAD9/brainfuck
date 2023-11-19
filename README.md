@@ -10,9 +10,9 @@ optimizations.
 ## C
 
 ### Interpreted
-- Time: 4.776779307s
+- Time: 4.39269186s
 - Memory: 1.375 MiB
 
 ### Transpiled
-- Time: 1.37855437s
+- Time: 1.406348474s
 - Memory: 1.250 MiB

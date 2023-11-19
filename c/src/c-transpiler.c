@@ -17,10 +17,24 @@ void c_transpile(FILE *out, const Vec instructions, size_t tape_size) {
         "\n"
         "#define ESC \"\\x1b\"\n"
         "#define CSI ESC \"[\"\n"
-        "#define FG_RED \"91m\""
+        "#define FG_RED \"91m\"\n"
+        "\n"
+        "// this is actually much faster than `num %% mod` when \n"
+        "// `num < 2 * mod` (like 5 - 11 times faster)\n"
+        "#define ADD_MOD(num, add, mod) \\\n"
+        "    num += add; \\\n"
+        "    if (num >= mod) { \\\n"
+        "        do { \\\n"
+        "            num -= mod; \\\n"
+        "        } while (num >= mod); \\\n"
+        "    } else { \\\n"
+        "        while (num < 0) { \\\n"
+        "            num += mod; \\\n"
+        "        } \\\n"
+        "    } \\\n"
         "\n"
         "int main() {\n"
-        "    const size_t tape_size = %zu;\n"
+        "    const long tape_size = %zu;\n"
         "    unsigned char *tape = calloc(tape_size, sizeof(char));\n"
         "    if (!tape) {\n"
         "        fprintf(\n"
@@ -29,7 +43,7 @@ void c_transpile(FILE *out, const Vec instructions, size_t tape_size) {
         "            tape_size\n"
         "        );\n"
         "    }\n"
-        "    size_t idx = 0;\n"
+        "    long idx = 0;\n"
         "\n",
         tape_size
     );
@@ -50,19 +64,7 @@ void c_transpile(FILE *out, const Vec instructions, size_t tape_size) {
 static void transpile_instruction(FILE *out, size_t *indent, Instruction inst) {
     if (inst.move) {
         repeat(out, ' ', *indent);
-        fprintf(out, "idx += %ld;\n", inst.move);
-        repeat(out, ' ', *indent);
-        fprintf(out, "while (idx >= tape_size) {\n");
-        repeat(out, ' ', *indent + 4);
-        fprintf(out, "idx -= tape_size;\n");
-        repeat(out, ' ', *indent);
-        fprintf(out, "}\n");
-        repeat(out, ' ', *indent);
-        fprintf(out, "while (idx < 0) {\n");
-        repeat(out, ' ', *indent + 4);
-        fprintf(out, "idx += tape_size;\n");
-        repeat(out, ' ', *indent);
-        fprintf(out, "}\n");
+        fprintf(out, "ADD_MOD(idx, %ld, tape_size);\n", inst.move);
     }
 
     if (inst.add) {
