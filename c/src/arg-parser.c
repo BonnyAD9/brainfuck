@@ -9,8 +9,9 @@ static size_t parse_size(char *str);
 
 Args arg_parse(char **argv) {
     Args res = {
-        .tape_size = 30000,
+        .action = INTERPRET,
         .file = NULL,
+        .tape_size = 30000,
         .print_info = 0,
         .print_help = 0,
     };
@@ -25,9 +26,11 @@ Args arg_parse(char **argv) {
             res.print_info = 1;
         } else if (
             strcmp(*argv, "-?") == 0 || strcmp(*argv, "-h") == 0
-            || strcmp(*argv, "--help")
+            || strcmp(*argv, "--help") == 0
         ) {
             res.print_help = 1;
+        } else if (strcmp(*argv, "-T") == 0 || strcmp(*argv, "--transpile") == 0) {
+            res.action = TRANSPILE;
         } else {
             if (res.file) {
                 set_err_msg(

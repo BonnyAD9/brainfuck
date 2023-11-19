@@ -8,6 +8,7 @@
 #include "optimizer.h"     // o_acc_stream
 #include "ansi-terminal.h" // FG_*, SET_*, RESET
 #include "arg-parser.h"    // Args, arg_parse, args_print
+#include "c-transpiler.h"  // c_transpile
 
 void print_info(FILE *out, Args *args, Vec *tape);
 void help(void);
@@ -57,9 +58,15 @@ int main(int argc, char **argv) {
     }
 
     Vec tape = VEC_NEW(char);
-    VEC_EXTEND_EXACT(char, &tape, args.tape_size, 0);
-
-    interpret(code, &tape);
+    switch (args.action) {
+    case INTERPRET:
+        VEC_EXTEND_EXACT(char, &tape, args.tape_size, 0);
+        interpret(code, &tape);
+        break;
+    case TRANSPILE:
+        c_transpile(stdout, code, args.tape_size);
+        break;
+    }
 
     vec_free(&code);
     vec_free(&tape);

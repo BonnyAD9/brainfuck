@@ -3,7 +3,13 @@
 
 #include <stdio.h> // size_t, FILE
 
+typedef enum {
+    INTERPRET,
+    TRANSPILE,
+} ArgAction;
+
 typedef struct {
+    ArgAction action;
     char *file;
     size_t tape_size;
     int print_info: 1;

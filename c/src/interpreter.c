@@ -12,10 +12,9 @@ void interpret(const Vec code, Vec *tape) {
     while (ci < code.len) {
         Instruction i = VEC_AT(Instruction, code, ci);
 
-        ti += i.move;
+        ti = (ti + i.move) % tape->len;
 
-        VEC_AT(char, *tape, ti) =
-            (VEC_AT(char, *tape, ti) + i.add) % tape->len;
+        VEC_AT(char, *tape, ti) += i.add;
 
         if (i.flags & INST_PRINT) {
             putchar(VEC_AT(char, *tape, ti));
