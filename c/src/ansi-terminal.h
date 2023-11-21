@@ -4,6 +4,20 @@
 #define ESC "\x1b"
 #define CSI ESC "["
 
+#define MOVE_HOME      CSI "H"
+#define MOVE_TO(x, y)  CSI #y ";" #x "H"
+#define MOVE_UP(n)     CSI #n "A"
+#define MOVE_DOWN(n)   CSI #n "B"
+#define MOVE_RIGHT(n)  CSI #n "C"
+#define MOVE_LEFT(n)   CSI #n "D"
+#define MOVE_NEXT(n)   CSI #n "E"
+#define MOVE_PREV(n)   CSI #n "F"
+#define MOVE_COL(n)    CSI #n "G"
+#define REQUEST_POS    CSI "6n"
+#define SCROLL_UP      ESC "M"
+#define SAVE_CURSOR    ESC "7"
+#define RESTORE_CURSOR ESC "8"
+
 #define RESET CSI "0m"
 
 #define SET_BOLD         CSI "1m"
