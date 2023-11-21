@@ -7,7 +7,7 @@
 #include "err.h" // set_err_msg, GENERIC_ERR, EPROP
 
 static Instruction inst_s_file_next(FILE *in);
-static void noop(void *) {};
+static void noop(void *_) {};
 
 Instruction instruction_new(long move, long add, InstFlags flags, long jump) {
     return (Instruction) {

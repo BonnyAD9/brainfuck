@@ -126,10 +126,10 @@ void help(void) {
         "\n"
         FG_YELLOW "  -T  --transpile\n" RESET
         "    Transpile instead of interpret. See " FG_DARK_GREEN "*1 " RESET
-        "and " FG_DARK_YELLOW "-o" RESET "."
+        "and " FG_DARK_YELLOW "-o" RESET ".\n"
         "\n"
         FG_YELLOW "  -I  --interpret\n" RESET
-        "    Interpret, this is the default. See " FG_DARK_GREEN "*1."
+        "    Interpret, this is the default. See " FG_DARK_GREEN "*1.\n"
         "\n"
         FG_YELLOW "  -o  --out  --output " FG_WHITE "<file>\n" RESET
         "    Sets the output file of operation. Stdout by default.\n"
