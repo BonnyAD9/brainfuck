@@ -13,9 +13,13 @@ typedef struct {
     Vec tape;
     size_t code_index;
     size_t tape_index;
+    // Data type: char
+    Vec prompt;
 } Debugger;
 
 Debugger dbg_init(Args *args, Vec code);
+
+void dbg_free(Debugger *dbg);
 
 Debugger dbg_start(Debugger *dbg);
 
