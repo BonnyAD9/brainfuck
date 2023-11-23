@@ -18,6 +18,15 @@
 #define SAVE_CURSOR    ESC "7"
 #define RESTORE_CURSOR ESC "8"
 
+#define CLEAR_TO_END          CSI "J"
+#define CLEAR_FROM_START      CSI "1J"
+#define CLEAR_SCREEN          CSI "2J"
+#define CLEAR_BUFFER          CSI "3J"
+#define CLEAR_TO_LINE_END     CSI "K"
+#define CLEAR_FROM_LINE_START CSI "1K"
+#define CLEAR_LINE            CSI "2K"
+#define CLEAR CLEAR_SCREEN CLEAR_BUFFER MOVE_HOME
+
 #define RESET CSI "0m"
 
 #define SET_BOLD         CSI "1m"

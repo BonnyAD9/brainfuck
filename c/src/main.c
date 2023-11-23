@@ -155,8 +155,9 @@ void help(void) {
         FG_DARK_YELLOW "-T" RESET ", " FG_DARK_YELLOW "-I" RESET ",\n"
         "  the last flag takes effect.\n"
         "\n",
-        FG_RGB(250, 50, 170) "B" FG_RGB(240, 50, 180) "o" FG_RGB(230, 50, 190) "n"
-        FG_RGB(220, 50, 200) "n" FG_RGB(210, 50, 210) "y" FG_RGB(200, 50, 220) "A"
+        FG_RGB(250, 50, 170) "B" FG_RGB(240, 50, 180) "o"
+        FG_RGB(230, 50, 190) "n" FG_RGB(220, 50, 200) "n"
+        FG_RGB(210, 50, 210) "y" FG_RGB(200, 50, 220) "A"
         FG_RGB(190, 50, 230) "D" FG_RGB(180, 50, 240) "9" RESET
     );
 }

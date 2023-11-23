@@ -11,6 +11,7 @@ enum DbgAct {
     DA_NONE,
     DA_HELP,
     DA_QUIT,
+    DA_CLEAR_SCREEN,
 };
 #define DbgAct enum DbgAct
 
@@ -21,6 +22,7 @@ struct DbgCmd {
 
 static void dbg_ui_start(Debugger *dbg);
 static void dbg_prompt(Debugger *dbg);
+static void dbg_clear(Debugger *dbg);
 static DbgCmd dbg_parse_cmd(Debugger *dbg);
 static void dbg_help(Debugger *dbg);
 
@@ -55,6 +57,8 @@ void dbg_start(Debugger *dbg) {
         case DA_HELP:
             dbg_help(dbg);
             break;
+        case DA_CLEAR_SCREEN:
+            dbg_clear(dbg);
         default:
             break;
         }
@@ -96,7 +100,9 @@ static DbgCmd dbg_parse_cmd(Debugger *dbg) {
     if (*str == 0) {
         return res;
     }
-    if (strcmp(str, "h") == 0 || strcmp(str, "help") == 0) {
+    if (strcmp(str, "?") == 0 || strcmp(str, "h") == 0
+        || strcmp(str, "help") == 0
+    ) {
         res.action = DA_HELP;
         return res;
     }
@@ -106,11 +112,65 @@ static DbgCmd dbg_parse_cmd(Debugger *dbg) {
         res.action = DA_QUIT;
         return res;
     }
-    print_err("Unknown command '%s'", str);
+
+    if (*str != 'c') {
+        print_err("Unknown command '%s'", str);
+        return res;
+    }
+
+    ++str;
+
+    char cstr[] = "lears";
+    int ccnt[sizeof(cstr)] = { 0 };
+    for (char *s = str; *s; ++s) {
+        char *ci = strchr(cstr, *s);
+        if (!ci) {
+            --str;
+            print_err("Unknown command '%s'", str);
+            return res;
+        }
+        int idx = ci - cstr;
+        if (ccnt[idx]) {
+            --str;
+            print_err("Unknown command '%s'", str);
+            return res;
+        }
+        ccnt[idx] = 1;
+    }
+
+    res.action = DA_CLEAR_SCREEN;
     return res;
 }
 
 static void dbg_help(Debugger *dbg) {
-    // TODO: implement dbg help
-    print_err("Help not implemented");
+    printf(
+        "Welcome to " FG_GREEN SET_ITALIC "C brainfuck debugger " RESET "help "
+        "by %s\n"
+        "\n"
+        FG_GREEN "Usage:\n"
+        FG_WHITE "  <command>\n"
+        "\n"
+        FG_GREEN "Commands:\n"
+        FG_YELLOW "  ?  h  help\n" RESET
+        "    shows this help\n"
+        "\n"
+        FG_YELLOW "  q  quit  exit\n" RESET
+        "    exits the debugger\n"
+        "\n"
+        FG_YELLOW "  <anything that starts with 'c' and continues with any\n"
+        "  letters from the string 'lears' and is not one of the previous\n"
+        "  commands (e.g. 'clear', 'cls', 'claer', ...)>\n" RESET
+        "    " SET_STRIKETROUGH "Claers" RESET "Clears the entire screen and "
+        "buffer.\n"
+        "\n",
+        FG_RGB(250, 50, 170) "B" FG_RGB(240, 50, 180) "o"
+        FG_RGB(230, 50, 190) "n" FG_RGB(220, 50, 200) "n"
+        FG_RGB(210, 50, 210) "y" FG_RGB(200, 50, 220) "A"
+        FG_RGB(190, 50, 230) "D" FG_RGB(180, 50, 240) "9" RESET
+    );
+}
+
+static void dbg_clear(Debugger *dbg) {
+    printf(CLEAR);
+    fflush(stdin);
 }
