@@ -15,6 +15,7 @@ typedef struct {
     size_t tape_index;
     // Data type: char
     Vec prompt;
+    size_t term_width;
 } Debugger;
 
 Debugger dbg_init(Args *args, Vec code);

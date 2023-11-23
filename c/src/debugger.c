@@ -6,12 +6,14 @@
 #include "vec.h"           // Vec, VEC_NEW, VEC_EXTEND_EXACT
 #include "ansi-terminal.h" // FG_*
 #include "err.h"           // IS_ERR
+#include "instruction.h"   // inst_print, Instruction
 
 enum DbgAct {
     DA_NONE,
     DA_HELP,
     DA_QUIT,
     DA_CLEAR_SCREEN,
+    DA_LIST,
 };
 #define DbgAct enum DbgAct
 
@@ -23,6 +25,7 @@ struct DbgCmd {
 static void dbg_ui_start(Debugger *dbg);
 static void dbg_prompt(Debugger *dbg);
 static void dbg_clear(Debugger *dbg);
+static void dbg_list(Debugger *dbg);
 static DbgCmd dbg_parse_cmd(Debugger *dbg);
 static void dbg_help(Debugger *dbg);
 
@@ -34,6 +37,7 @@ Debugger dbg_init(Args *args, Vec code) {
         .tape = tape,
         .code_index = 0,
         .tape_index = 0,
+        .term_width = 79,
         .prompt = VEC_NEW(char),
     };
 }
@@ -59,6 +63,9 @@ void dbg_start(Debugger *dbg) {
             break;
         case DA_CLEAR_SCREEN:
             dbg_clear(dbg);
+            break;
+        case DA_LIST:
+            dbg_list(dbg);
         default:
             break;
         }
@@ -112,6 +119,12 @@ static DbgCmd dbg_parse_cmd(Debugger *dbg) {
         res.action = DA_QUIT;
         return res;
     }
+    if (strcmp(str, "l") == 0 || strcmp(str, "list") == 0) {
+        res.action = DA_LIST;
+        return res;
+    }
+
+    // parse all the variations of the clear command
 
     if (*str != 'c') {
         print_err("Unknown command '%s'", str);
@@ -154,14 +167,17 @@ static void dbg_help(Debugger *dbg) {
         FG_YELLOW "  ?  h  help\n" RESET
         "    shows this help\n"
         "\n"
-        FG_YELLOW "  q  quit  exit\n" RESET
-        "    exits the debugger\n"
-        "\n"
         FG_YELLOW "  <anything that starts with 'c' and continues with any\n"
         "  letters from the string 'lears' and is not one of the previous\n"
         "  commands (e.g. 'clear', 'cls', 'claer', ...)>\n" RESET
         "    " SET_STRIKETROUGH "Claers" RESET "Clears the entire screen and "
         "buffer.\n"
+        "\n"
+        FG_YELLOW "  l  list\n" RESET
+        "    Prints the code close to the active instruction.\n"
+        "\n"
+        FG_YELLOW "  q  quit  exit\n" RESET
+        "    exits the debugger\n"
         "\n",
         FG_RGB(250, 50, 170) "B" FG_RGB(240, 50, 180) "o"
         FG_RGB(230, 50, 190) "n" FG_RGB(220, 50, 200) "n"
@@ -173,4 +189,26 @@ static void dbg_help(Debugger *dbg) {
 static void dbg_clear(Debugger *dbg) {
     printf(CLEAR);
     fflush(stdin);
+}
+
+static void dbg_list(Debugger *dbg) {
+    size_t center = dbg->term_width / 2;
+    size_t start = dbg->code_index <= center ? 0 : dbg->code_index - center;
+    size_t end = start + dbg->term_width <= dbg->code.len
+        ? start + dbg->term_width
+        : dbg->code.len;
+    size_t diff = end - start;
+    if (diff < dbg->term_width) {
+        start = diff > start ? 0 : start - diff;
+    }
+
+    for (size_t i = start; i < end; ++i) {
+        inst_print(VEC_AT(Instruction, dbg->code, i));
+    }
+
+    size_t screen_index = dbg->code_index - start;
+
+    printf("\n");
+    D_MOVE_RIGHT(screen_index);
+    printf("^\n");
 }

@@ -38,10 +38,18 @@ int main(int argc, char **argv) {
         return print_err("Cannot open file '%s'", args.file);
     }
 
-    InstructionStream is = o_acc_stream(inst_s_file(f, true));
+    InstructionStream is = inst_s_file(f, true);
     if (IS_ERR) {
         must(&args);
         return print_err(NULL);
+    }
+
+    if (args.action != DEBUG) {
+        is = o_acc_stream(is);
+        if (IS_ERR) {
+            must(&args);
+            return print_err(NULL);
+        }
     }
 
     Vec code = VEC_NEW(Instruction);

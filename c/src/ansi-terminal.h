@@ -1,6 +1,8 @@
 #ifndef ANSI_COLORS_H_INCLUDED
 #define ANSI_COLORS_H_INCLUDED
 
+#include <stdio.h> // printf
+
 #define ESC "\x1b"
 #define CSI ESC "["
 
@@ -17,6 +19,15 @@
 #define SCROLL_UP      ESC "M"
 #define SAVE_CURSOR    ESC "7"
 #define RESTORE_CURSOR ESC "8"
+
+#define D_MOVE_TO(x, y)  printf(CSI "%d;%dH", (int)(y), (int)(x))
+#define D_MOVE_UP(n)     if (n) printf(CSI "%dA", (int)(n))
+#define D_MOVE_DOWN(n)   if (n) printf(CSI "%dB", (int)(n))
+#define D_MOVE_RIGHT(n)  if (n) printf(CSI "%dC", (int)(n))
+#define D_MOVE_LEFT(n)   if (n) printf(CSI "%dD", (int)(n))
+#define D_MOVE_NEXT(n)   printf(CSI "%dE", (int)(n))
+#define D_MOVE_PREV(n)   printf(CSI "%dF", (int)(n))
+#define D_MOVE_COL(n)    printf(CSI "%dG", (int)(n))
 
 #define CLEAR_TO_END          CSI "J"
 #define CLEAR_FROM_START      CSI "1J"
@@ -90,5 +101,7 @@
 
 #define FG_RGB(r, g, b) CSI "38;2;" #r ";" #g ";" #b "m"
 #define BG_RGB(r, g, b) CSI "48;2;" #r ";" #g ";" #b "m"
+
+void repeat(FILE *out, char c, size_t amount);
 
 #endif // ANSI_COLORS_H_INCLUDED

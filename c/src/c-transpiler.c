@@ -3,11 +3,11 @@
 #include <stdio.h>   // FILE, fputc, fprintf
 #include <stdbool.h> // bool
 
-#include "vec.h" // Vec
-#include "instruction.h"
+#include "vec.h"           // Vec
+#include "instruction.h"   // Instruction
+#include "ansi-terminal.h" // repeat
 
 static void transpile_instruction(FILE *out, size_t *indent, Instruction inst);
-static void repeat(FILE *out, char c, size_t amount);
 
 void c_transpile(FILE *out, const Vec instructions, size_t tape_size) {
     fprintf(
@@ -95,10 +95,4 @@ static void transpile_instruction(FILE *out, size_t *indent, Instruction inst) {
     }
 
     fprintf(out, "\n");
-}
-
-static void repeat(FILE *out, char c, size_t amount) {
-    while (amount--) {
-        fputc(c, out);
-    }
 }

@@ -42,6 +42,8 @@ Instruction instruction_new(long move, long add, InstFlags flags, long jump);
 
 InstructionStream inst_s_file(FILE *in, bool free);
 
+void inst_print(Instruction inst);
+
 /// Loads instructions from stream `is` into vector `out`
 bool read_instructions(InstructionStream is, Vec *out);
 

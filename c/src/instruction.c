@@ -26,6 +26,34 @@ InstructionStream inst_s_file(FILE *in, bool free) {
     };
 }
 
+void inst_print(Instruction inst) {
+    if (inst.move > 0) {
+        repeat(stdout, '>', inst.move);
+    } else if (inst.move < 0) {
+        repeat(stdout, '<', -inst.move);
+    }
+
+    if (inst.add > 0) {
+        repeat(stdout, '+', inst.add);
+    } else if (inst.add < 0) {
+        repeat(stdout, '-', -inst.add);
+    }
+
+    if (inst.flags & INST_PRINT) {
+        printf(".");
+    }
+
+    if (inst.flags & INST_READ) {
+        printf(",");
+    }
+
+    if (inst.jump > 0) {
+        printf("[");
+    } else if (inst.jump < 0) {
+        printf("]");
+    }
+}
+
 bool read_instructions(InstructionStream is, Vec *out) {
     Vec jumps = VEC_NEW(long);
 
