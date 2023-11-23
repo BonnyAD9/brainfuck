@@ -14,6 +14,7 @@ enum DbgAct {
     DA_QUIT,
     DA_CLEAR_SCREEN,
     DA_LIST,
+    DA_STEP,
 };
 #define DbgAct enum DbgAct
 
@@ -26,6 +27,7 @@ static void dbg_ui_start(Debugger *dbg);
 static void dbg_prompt(Debugger *dbg);
 static void dbg_clear(Debugger *dbg);
 static void dbg_list(Debugger *dbg);
+static void dbg_step(Debugger *dbg);
 static DbgCmd dbg_parse_cmd(Debugger *dbg);
 static void dbg_help(Debugger *dbg);
 
@@ -60,6 +62,10 @@ void dbg_start(Debugger *dbg) {
             break;
         case DA_LIST:
             dbg_list(dbg);
+            break;
+        case DA_STEP:
+            dbg_step(dbg);
+            break;
         default:
             break;
         }
@@ -85,6 +91,10 @@ static void dbg_prompt(Debugger *dbg) {
         if (IS_ERR) {
             return;
         }
+    }
+    if (c == EOF) {
+        clearerr(stdin);
+        printf("\n");
     }
     VEC_PUSH(char, &dbg->prompt, 0);
     if (IS_ERR) {
@@ -115,6 +125,12 @@ static DbgCmd dbg_parse_cmd(Debugger *dbg) {
     }
     if (strcmp(str, "l") == 0 || strcmp(str, "list") == 0) {
         res.action = DA_LIST;
+        return res;
+    }
+    if (strcmp(str, "n") == 0 || strcmp(str, "next") == 0
+        || strcmp(str, "step") == 0
+    ) {
+        res.action = DA_STEP;
         return res;
     }
 
@@ -207,4 +223,9 @@ static void dbg_list(Debugger *dbg) {
     printf("\n");
     D_MOVE_RIGHT(screen_index);
     printf("^\n");
+}
+
+static void dbg_step(Debugger *dbg) {
+    itpt_inst(dbg->itpt);
+    dbg_list(dbg);
 }
