@@ -21,6 +21,6 @@ Debugger dbg_init(Args *args, Vec code);
 
 void dbg_free(Debugger *dbg);
 
-Debugger dbg_start(Debugger *dbg);
+void dbg_start(Debugger *dbg);
 
 #endif // DEBUGGER_H_INCLUDED

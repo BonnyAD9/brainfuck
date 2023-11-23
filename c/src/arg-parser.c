@@ -34,6 +34,8 @@ Args arg_parse(char **argv) {
             res.action = TRANSPILE;
         } else if (strcmp(*argv, "-I") == 0 || strcmp(*argv, "--interpret") == 0) {
             res.action = INTERPRET;
+        } else if (strcmp(*argv, "-D") == 0 || strcmp(*argv, "--debug") == 0) {
+            res.action = DEBUG;
         } else if (
             strcmp(*argv, "-o") == 0 || strcmp(*argv, "--out") == 0
             || strcmp(*argv, "--output") == 0

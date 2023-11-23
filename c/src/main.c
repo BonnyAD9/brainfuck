@@ -9,9 +9,11 @@
 #include "ansi-terminal.h" // FG_*, SET_*, RESET
 #include "arg-parser.h"    // Args, arg_parse, args_print
 #include "c-transpiler.h"  // c_transpile
+#include "debugger.h"      // dbg_init, dbg_start
 
 void handle_interpret(const Vec code, Args *args);
 void handle_transpile(const Vec code, Args *args);
+void handle_debug(const Vec code, Args *args);
 void print_info(FILE *out, Args *args, Vec *tape);
 void must(Args *args);
 void help(void);
@@ -61,9 +63,13 @@ int main(int argc, char **argv) {
     case TRANSPILE:
         handle_transpile(code, &args);
         break;
+    case DEBUG:
+        handle_debug(code, &args);
+        break;
     }
 
     vec_free(&code);
+    return print_err(NULL);
 }
 
 void handle_interpret(const Vec code, Args *args) {
@@ -84,6 +90,16 @@ void handle_transpile(const Vec code, Args *args) {
     }
 
     c_transpile(output, code, args->tape_size);
+}
+
+void handle_debug(const Vec code, Args *args) {
+    Debugger dbg = dbg_init(args, code);
+    if (IS_ERR) {
+        print_err(NULL);
+        return;
+    }
+    dbg_start(&dbg);
+    dbg_free(&dbg);
 }
 
 void print_info(FILE *out, Args *args, Vec *code) {

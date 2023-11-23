@@ -6,6 +6,7 @@
 typedef enum {
     INTERPRET,
     TRANSPILE,
+    DEBUG,
 } ArgAction;
 
 typedef struct {
