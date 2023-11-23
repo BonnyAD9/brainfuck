@@ -11,9 +11,9 @@
 #include "c-transpiler.h"  // c_transpile
 #include "debugger.h"      // dbg_init, dbg_start
 
-void handle_interpret(const Vec code, Args *args);
+void handle_interpret(Vec code, Args *args);
 void handle_transpile(const Vec code, Args *args);
-void handle_debug(const Vec code, Args *args);
+void handle_debug(Vec code, Args *args);
 void print_info(FILE *out, Args *args, Vec *tape);
 void must(Args *args);
 void help(void);
@@ -85,10 +85,12 @@ void handle_interpret(const Vec code, Args *args) {
         WPRINTF("Unused argument '-o'");
     }
 
-    Vec tape = VEC_NEW(char);
-    VEC_EXTEND_EXACT(char, &tape, args->tape_size, 0);
-
-    interpret(code, &tape);
+    Interpreter itpt = itpt_init(code, args);
+    if (IS_ERR) {
+        return;
+    }
+    itpt_all(&itpt);
+    itpt_free(&itpt);
 }
 
 void handle_transpile(const Vec code, Args *args) {
@@ -100,14 +102,24 @@ void handle_transpile(const Vec code, Args *args) {
     c_transpile(output, code, args->tape_size);
 }
 
-void handle_debug(const Vec code, Args *args) {
-    Debugger dbg = dbg_init(args, code);
+void handle_debug(Vec code, Args *args) {
+    if (args->output) {
+        WPRINTF("Unused argument '-o'");
+    }
+
+    Interpreter itpt = itpt_init(code, args);
+    if (IS_ERR) {
+        print_err(NULL);
+        return;
+    }
+    Debugger dbg = dbg_init(args, &itpt);
     if (IS_ERR) {
         print_err(NULL);
         return;
     }
     dbg_start(&dbg);
     dbg_free(&dbg);
+    itpt_free(&itpt);
 }
 
 void print_info(FILE *out, Args *args, Vec *code) {

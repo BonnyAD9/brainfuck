@@ -29,22 +29,16 @@ static void dbg_list(Debugger *dbg);
 static DbgCmd dbg_parse_cmd(Debugger *dbg);
 static void dbg_help(Debugger *dbg);
 
-Debugger dbg_init(Args *args, Vec code) {
-    Vec tape = VEC_NEW(unsigned char);
-    VEC_EXTEND_EXACT(unsigned char, &tape, args->tape_size, 0);
+Debugger dbg_init(Args *args, Interpreter *itpt) {
     return (Debugger) {
-        .code = code,
-        .tape = tape,
-        .code_index = 0,
-        .tape_index = 0,
-        .term_width = 79,
+        .itpt = itpt,
         .prompt = VEC_NEW(char),
+        .term_width = 79,
     };
 }
 
 void dbg_free(Debugger *dbg) {
     vec_free(&dbg->prompt);
-    vec_free(&dbg->tape);
 }
 
 void dbg_start(Debugger *dbg) {
@@ -193,20 +187,22 @@ static void dbg_clear(Debugger *dbg) {
 
 static void dbg_list(Debugger *dbg) {
     size_t center = dbg->term_width / 2;
-    size_t start = dbg->code_index <= center ? 0 : dbg->code_index - center;
-    size_t end = start + dbg->term_width <= dbg->code.len
+    size_t start = dbg->itpt->code_index <= center
+        ? 0
+        : dbg->itpt->code_index - center;
+    size_t end = start + dbg->term_width <= dbg->itpt->code.len
         ? start + dbg->term_width
-        : dbg->code.len;
+        : dbg->itpt->code.len;
     size_t diff = end - start;
     if (diff < dbg->term_width) {
         start = diff > start ? 0 : start - diff;
     }
 
     for (size_t i = start; i < end; ++i) {
-        inst_print(VEC_AT(Instruction, dbg->code, i));
+        inst_print(VEC_AT(Instruction, dbg->itpt->code, i));
     }
 
-    size_t screen_index = dbg->code_index - start;
+    size_t screen_index = dbg->itpt->code_index - start;
 
     printf("\n");
     D_MOVE_RIGHT(screen_index);
