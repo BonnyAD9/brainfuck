@@ -27,7 +27,9 @@ static void dbg_ui_start(Debugger *dbg);
 static void dbg_prompt(Debugger *dbg);
 static void dbg_clear(Debugger *dbg);
 static void dbg_list(Debugger *dbg);
-static void dbg_step(Debugger *dbg);
+static void dbg_list_code(Debugger *dbg);
+static void dbg_list_tape(Debugger *dbg);
+static void dbg_step(Debugger *dbg, size_t count);
 static DbgCmd dbg_parse_cmd(Debugger *dbg);
 static void dbg_help(Debugger *dbg);
 
@@ -64,7 +66,7 @@ void dbg_start(Debugger *dbg) {
             dbg_list(dbg);
             break;
         case DA_STEP:
-            dbg_step(dbg);
+            dbg_step(dbg, 1);
             break;
         default:
             break;
@@ -202,6 +204,11 @@ static void dbg_clear(Debugger *dbg) {
 }
 
 static void dbg_list(Debugger *dbg) {
+    dbg_list_tape(dbg);
+    dbg_list_code(dbg);
+}
+
+static void dbg_list_code(Debugger *dbg) {
     size_t center = dbg->term_width / 2;
     size_t start = dbg->itpt->code_index <= center
         ? 0
@@ -225,7 +232,36 @@ static void dbg_list(Debugger *dbg) {
     printf("^\n");
 }
 
-static void dbg_step(Debugger *dbg) {
-    itpt_inst(dbg->itpt);
+static void dbg_list_tape(Debugger *dbg) {
+    size_t i_len = 3;
+
+    size_t count = dbg->term_width / i_len;
+    size_t c_center = count / 2;
+    size_t c_start = dbg->itpt->tape_index <= c_center
+        ? 0
+        : dbg->itpt->code_index - c_center;
+    size_t c_end = c_start + count <= dbg->itpt->tape.len
+        ? c_start + count
+        : dbg->itpt->tape.len;
+    size_t c_diff = c_end - c_start;
+    if (c_diff < count) {
+        c_start = c_diff > c_start ? 0 : c_start - c_diff;
+    }
+
+    for (size_t i = c_start; i < c_end; ++i) {
+        printf("%02x ", (int)VEC_AT(unsigned char, dbg->itpt->tape, i));
+    }
+
+    size_t screen_index = (dbg->itpt->tape_index - c_start) * i_len;
+
+    printf("\n");
+    D_MOVE_RIGHT(screen_index);
+    printf("^\n");
+}
+
+static void dbg_step(Debugger *dbg, size_t count) {
+    while (count--) {
+        itpt_inst(dbg->itpt);
+    }
     dbg_list(dbg);
 }
