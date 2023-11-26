@@ -27,13 +27,54 @@ void itpt_free(Interpreter *itpt) {
 }
 
 void itpt_all(Interpreter *itpt) {
-    while (itpt->code_index < itpt->code.len) {
-        _itpt_inst(itpt);
+    // Tape index
+    size_t ti = itpt->tape_index;
+    // Code index
+    size_t ci = itpt->code_index;
+
+    const size_t clen = itpt->code.len;
+    const size_t tlen = itpt->tape.len;
+    Instruction *restrict const code = (Instruction *)itpt->code.data;
+    unsigned char *restrict const tape = (unsigned char *)itpt->tape.data;
+
+    while (ci < clen) {
+        Instruction i = code[ci];
+
+        ti += i.move;
+        // having theese cycles is actually about 11 times faster than using %
+        while (ti >= tlen) {
+            ti -= tlen;
+        }
+        while (ti < 0) {
+            ti += tlen;
+        }
+
+        tape[ti] += i.add;
+
+        if (i.flags & INST_PRINT) {
+            putchar(tape[ti]);
+        }
+
+        if (i.flags & INST_READ) {
+            tape[ti] = getchar();
+        }
+
+        ++ci;
+        if (i.jump > 0 && tape[ti] == 0) {
+            ci += i.jump;
+        } else if (i.jump < 0 && tape[ti] != 0) {
+            ci += i.jump;
+        }
     }
+
+    itpt->code_index = ci;
+    itpt->tape_index = ti;
 }
 
 void itpt_inst(Interpreter *itpt) {
-    _itpt_inst(itpt);
+    if (itpt->code_index < itpt->code.len) {
+        _itpt_inst(itpt);
+    }
 }
 
 static inline void _itpt_inst(Interpreter *itpt) {
