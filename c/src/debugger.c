@@ -221,6 +221,16 @@ static void dbg_list_code(Debugger *dbg) {
         start = diff > start ? 0 : start - diff;
     }
 
+    size_t d_diff = start % 5;
+    size_t d_start = d_diff == 0 ? start : start - d_diff + 5;
+    D_MOVE_RIGHT(d_diff);
+
+    for (size_t i = d_start; i < end; i += 5) {
+        printf(SAVE_CURSOR "%zu" RESTORE_CURSOR MOVE_RIGHT(5), i);
+    }
+
+    printf("\n");
+
     for (size_t i = start; i < end; ++i) {
         inst_print(VEC_AT(Instruction, dbg->itpt->code, i));
     }
