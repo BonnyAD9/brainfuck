@@ -2,6 +2,7 @@
 
 #include <stdio.h>  // printf, fflush
 #include <string.h> // strmcp
+#include <stdlib.h> // system
 
 #include "vec.h"           // Vec, VEC_NEW, VEC_EXTEND_EXACT
 #include "ansi-terminal.h" // FG_*
@@ -15,6 +16,7 @@ enum DbgAct {
     DA_CLEAR_SCREEN,
     DA_LIST,
     DA_STEP,
+    DA_SYSTEM,
 };
 #define DbgAct enum DbgAct
 
@@ -68,6 +70,9 @@ void dbg_start(Debugger *dbg) {
         case DA_STEP:
             dbg_step(dbg, 1);
             break;
+        case DA_SYSTEM:
+            system(dbg->prompt.data + 1);
+            break;
         default:
             break;
         }
@@ -113,6 +118,12 @@ static DbgCmd dbg_parse_cmd(Debugger *dbg) {
     if (*str == 0) {
         return res;
     }
+
+    if (*str == ':') {
+        res.action = DA_SYSTEM;
+        return res;
+    }
+
     if (strcmp(str, "?") == 0 || strcmp(str, "h") == 0
         || strcmp(str, "help") == 0
     ) {
@@ -173,7 +184,11 @@ static void dbg_help(Debugger *dbg) {
         "by %s\n"
         "\n"
         FG_GREEN "Usage:\n"
-        FG_WHITE "  <command>\n"
+        FG_WHITE "  <command>\n" RESET
+        "    Executes debugger command.\n"
+        "\n"
+        FG_WHITE "  :<command>\n" RESET
+        "    Executes system command.\n"
         "\n"
         FG_GREEN "Commands:\n"
         FG_YELLOW "  ?  h  help\n" RESET
@@ -184,6 +199,9 @@ static void dbg_help(Debugger *dbg) {
         "  commands (e.g. 'clear', 'cls', 'claer', ...)>\n" RESET
         "    " SET_STRIKETROUGH "Claers" RESET "Clears the entire screen and "
         "buffer.\n"
+        "\n"
+        FG_YELLOW "  n  next  step\n" RESET
+        "    Steps one instruction forward and prints the code and tape.\n"
         "\n"
         FG_YELLOW "  l  list\n" RESET
         "    Prints the code close to the active instruction.\n"
