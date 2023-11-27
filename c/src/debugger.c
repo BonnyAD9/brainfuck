@@ -13,7 +13,7 @@
 
 static void dbg_clear(Debugger *dbg);
 static void dbg_list(Debugger *dbg);
-static void dbg_step(Debugger *dbg, size_t count);
+static void dbg_step(Debugger *dbg, DbgStepCmd args);
 
 Debugger dbg_init(Args *args, Interpreter *itpt) {
     return (Debugger) {
@@ -30,13 +30,19 @@ void dbg_free(Debugger *dbg) {
 void dbg_start(Debugger *dbg) {
     dbg_ui_start(dbg);
 
-    dbg_ui_prompt(dbg);
-    if (IS_ERR) {
-        print_err(NULL);
-        pop_err(NULL);
-    }
-    DbgCmd cmd;
-    while ((cmd = dbg_parse_cmd(dbg)).action != DA_QUIT) {
+    while (true) {
+        dbg_ui_prompt(dbg);
+        if (IS_ERR) {
+            print_err(NULL);
+            pop_err(NULL);
+        }
+        DbgCmd cmd = dbg_parse_cmd(dbg);
+        if (IS_ERR) {
+            print_err(NULL);
+            pop_err(NULL);
+            continue;
+        }
+
         switch (cmd.action) {
         case DA_HELP:
             dbg_ui_help(dbg);
@@ -48,18 +54,19 @@ void dbg_start(Debugger *dbg) {
             dbg_list(dbg);
             break;
         case DA_STEP:
-            dbg_step(dbg, 1);
+            dbg_step(dbg, cmd.step);
             break;
         case DA_SYSTEM:
-            system(dbg->prompt.data + 1);
+            system(cmd.system.command);
             break;
-        default:
+        case DA_QUIT:
+            break;
+        case DA_NONE:
             break;
         }
-        dbg_ui_prompt(dbg);
-        if (IS_ERR) {
-            print_err(NULL);
-            pop_err(NULL);
+
+        if (cmd.action == DA_QUIT) {
+            break;
         }
     }
 }
@@ -74,8 +81,8 @@ static void dbg_list(Debugger *dbg) {
     dbg_ui_list_code(dbg);
 }
 
-static void dbg_step(Debugger *dbg, size_t count) {
-    while (count--) {
+static void dbg_step(Debugger *dbg, DbgStepCmd args) {
+    while (args.count--) {
         itpt_inst(dbg->itpt);
     }
     dbg_list(dbg);

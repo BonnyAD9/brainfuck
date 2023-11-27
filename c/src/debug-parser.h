@@ -14,7 +14,19 @@ typedef enum {
 } DbgAct;
 
 typedef struct {
+    size_t count;
+} DbgStepCmd;
+
+typedef struct {
+    char *command;
+} DbgSystemCmd;
+
+typedef struct {
     DbgAct action;
+    union {
+        DbgStepCmd step;
+        DbgSystemCmd system;
+    };
 } DbgCmd;
 
 DbgCmd dbg_parse_cmd(Debugger *dbg);

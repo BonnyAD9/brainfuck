@@ -3,9 +3,8 @@
 #include <string.h> // strcmp, size_t
 #include <stdlib.h> // strtoull, strtoul
 
-#include "err.h" // IS_ERR
-
-static size_t parse_size(char *str);
+#include "err.h"     // IS_ERR
+#include "parsers.h" // parse_size
 
 Args arg_parse(char **argv) {
     Args res = {
@@ -87,35 +86,4 @@ void args_print(Args *args, FILE *out) {
         args->print_info ? "true" : "false",
         args->print_help ? "true" : "false"
     );
-}
-
-static size_t parse_size(char *str) {
-    if (!str) {
-        set_err_msg(INVALID_ARGS, "Missing unsigned number argument.");
-        return 0;
-    }
-
-    if (sizeof(size_t) == sizeof(long long)) {
-        char *end;
-        size_t res = strtoull(str, &end, 10);
-        if (IS_ERR) {
-            return 0;
-        }
-        if (*end || end == str) {
-            set_err_msg(INVALID_ARGS, "Invalid unsigned number.");
-            return 0;
-        }
-        return res;
-    }
-
-    char *end;
-    size_t res = strtoul(str, &end, 10);
-    if (IS_ERR) {
-        return 0;
-    }
-    if (*end || end == str) {
-        set_err_msg(INVALID_ARGS, "Invalid unsigned number");
-        return 0;
-    }
-    return res;
 }

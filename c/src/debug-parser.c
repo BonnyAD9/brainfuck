@@ -1,74 +1,151 @@
 #include "debug-parser.h"
 
 #include <string.h> // strcmp
+#include <ctype.h>  // isspace
 
 #include "debugger.h" // Debugger
 #include "err.h"      // print_err
+#include "parsers.h"  // parse_size
+
+static DbgStepCmd parse_step(char **args);
+
+static char *next_arg(char **args);
 
 DbgCmd dbg_parse_cmd(Debugger *dbg) {
     DbgCmd res = { .action = DA_NONE, };
 
-    char *str = dbg->prompt.data;
+    char *args = dbg->prompt.data;
 
-    if (*str == 0) {
+    char *cmd = next_arg(&args);
+    if (!cmd) {
         return res;
     }
 
-    if (*str == ':') {
+    if (*cmd == ':') {
         res.action = DA_SYSTEM;
+        res.system.command = cmd + 1;
         return res;
     }
 
-    if (strcmp(str, "?") == 0 || strcmp(str, "h") == 0
-        || strcmp(str, "help") == 0
+    if (strcmp(cmd, "?") == 0 || strcmp(cmd, "h") == 0
+        || strcmp(cmd, "help") == 0
     ) {
         res.action = DA_HELP;
+        if (next_arg(&args)) {
+            set_err_msg(
+                INVALID_ARGS,
+                "Command 'help' doesn't take any arguments."
+            );
+        }
         return res;
     }
-    if (strcmp(str, "q") == 0 || strcmp(str, "quit") == 0
-        || strcmp(str, "exit") == 0
+    if (strcmp(cmd, "q") == 0 || strcmp(cmd, "quit") == 0
+        || strcmp(cmd, "exit") == 0
     ) {
         res.action = DA_QUIT;
+        if (next_arg(&args)) {
+            set_err_msg(
+                INVALID_ARGS,
+                "Command 'help' doesn't take any arguments."
+            );
+        }
         return res;
     }
-    if (strcmp(str, "l") == 0 || strcmp(str, "list") == 0) {
+    if (strcmp(cmd, "l") == 0 || strcmp(cmd, "list") == 0) {
         res.action = DA_LIST;
+        if (next_arg(&args)) {
+            set_err_msg(
+                INVALID_ARGS,
+                "Command 'help' doesn't take any arguments."
+            );
+        }
         return res;
     }
-    if (strcmp(str, "n") == 0 || strcmp(str, "next") == 0
-        || strcmp(str, "step") == 0
+    if (strcmp(cmd, "n") == 0 || strcmp(cmd, "next") == 0
+        || strcmp(cmd, "step") == 0
     ) {
         res.action = DA_STEP;
+        res.step = parse_step(&args);
         return res;
     }
 
     // parse all the variations of the clear command
 
-    if (*str != 'c') {
-        print_err("Unknown command '%s'", str);
+    if (*cmd != 'c') {
+        print_err("Unknown command '%s'", cmd);
         return res;
     }
 
-    ++str;
+    ++cmd;
 
     char cstr[] = "lears";
     int ccnt[sizeof(cstr)] = { 0 };
-    for (char *s = str; *s; ++s) {
+    for (char *s = cmd; *s; ++s) {
         char *ci = strchr(cstr, *s);
         if (!ci) {
-            --str;
-            print_err("Unknown command '%s'", str);
+            --cmd;
+            print_err("Unknown command '%s'", cmd);
             return res;
         }
         int idx = ci - cstr;
         if (ccnt[idx]) {
-            --str;
-            print_err("Unknown command '%s'", str);
+            --cmd;
+            print_err("Unknown command '%s'", cmd);
             return res;
         }
         ccnt[idx] = 1;
     }
 
     res.action = DA_CLEAR_SCREEN;
+    if (next_arg(&args)) {
+        set_err_msg(
+            INVALID_ARGS,
+            "Command 'clear' doesn't take any arguments."
+        );
+    }
+    return res;
+}
+
+static DbgStepCmd parse_step(char **args) {
+    DbgStepCmd res = {
+        .count = 1,
+    };
+
+    char *arg = next_arg(args);
+    if (!arg) {
+        return res;
+    }
+
+    res.count = parse_size(arg);
+    if (IS_ERR) {
+        return res;
+    }
+
+    if (next_arg(args)) {
+        set_err_msg(INVALID_ARGS, "Command 'step' takes at most 1 argument.");
+    }
+
+    return res;
+}
+
+static char *next_arg(char **args) {
+    while (**args && isspace(**args)) {
+        ++*args;
+    }
+
+    if (!**args) {
+        return NULL;
+    }
+
+    char *res = *args;
+    while (**args && !isspace(**args)) {
+        ++*args;
+    }
+
+    if (**args) {
+        **args = 0;
+        ++*args;
+    }
+
     return res;
 }
