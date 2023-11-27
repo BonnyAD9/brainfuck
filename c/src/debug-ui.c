@@ -7,11 +7,17 @@
 #include "err.h"           // IS_ERR
 #include "vec.h"           // VEC_*, vec_pop
 
+#ifndef MAX_EOF_RETRIES
+#define MAX_EOF_RETRIES 8
+#endif // MAX_EOF_RETRIES
+
 void dbg_ui_start(Debugger *dbg) {
     printf("Use " FG_YELLOW "h " RESET "to show the help.\n");
 }
 
 void dbg_ui_prompt(Debugger *dbg) {
+    static size_t eof_count = 0;
+
     printf(FG_MAGENTA " > " RESET);
     fflush(stdout);
     int c;
@@ -22,10 +28,23 @@ void dbg_ui_prompt(Debugger *dbg) {
             return;
         }
     }
+
     if (c == EOF) {
         clearerr(stdin);
         printf("\n");
+
+        if (++eof_count > MAX_EOF_RETRIES) {
+            set_err_msg(GENERIC_ERR, "Eof limit reached in debugger.");
+            return;
+        }
+
+        if (eof_count == MAX_EOF_RETRIES) {
+            WPRINTF("Sending EOF one more time will exit the debugger.");
+        }
+    } else {
+        eof_count = 0;
     }
+
     VEC_PUSH(char, &dbg->prompt, 0);
     if (IS_ERR) {
         return;
@@ -117,8 +136,9 @@ void dbg_ui_help(Debugger *dbg) {
         "    " SET_STRIKETROUGH "Claers" RESET "Clears the entire screen and "
         "buffer.\n"
         "\n"
-        FG_YELLOW "  n  next  step\n" RESET
-        "    Steps one instruction forward and prints the code and tape.\n"
+        FG_YELLOW "  n  next  step " FG_DARK_GRAY "[N]" "\n" RESET
+        "    Steps N instructions forward and prints the code and tape. \n"
+        "    N = 1 by default.\n"
         "\n"
         FG_YELLOW "  l  list\n" RESET
         "    Prints the code close to the active instruction.\n"

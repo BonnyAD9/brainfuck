@@ -33,8 +33,7 @@ void dbg_start(Debugger *dbg) {
     while (true) {
         dbg_ui_prompt(dbg);
         if (IS_ERR) {
-            print_err(NULL);
-            pop_err(NULL);
+            return;
         }
         DbgCmd cmd = dbg_parse_cmd(dbg);
         if (IS_ERR) {
