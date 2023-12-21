@@ -2,10 +2,10 @@
 
 #include <stdio.h> // printf, stdin, EOF, stdout
 
-#include "debugger.h"      // Debugger
-#include "ansi-terminal.h" // FG_*, RESET
-#include "err.h"           // IS_ERR
-#include "vec.h"           // VEC_*, vec_pop
+#include "../tools/ansi-terminal.h" // FG_*, RESET
+#include "../tools/err.h"           // IS_ERR
+#include "../tools/vec.h"           // VEC_*, vec_pop
+#include "debugger.h"               // Debugger
 
 #ifndef MAX_EOF_RETRIES
 #define MAX_EOF_RETRIES 8

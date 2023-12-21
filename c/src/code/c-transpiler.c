@@ -3,9 +3,9 @@
 #include <stdio.h>   // FILE, fputc, fprintf
 #include <stdbool.h> // bool
 
-#include "vec.h"           // Vec
-#include "instruction.h"   // Instruction
-#include "ansi-terminal.h" // repeat
+#include "../tools/vec.h"           // Vec
+#include "../tools/ansi-terminal.h" // repeat
+#include "instruction.h"            // Instruction
 
 static void transpile_instruction(FILE *out, size_t *indent, Instruction inst);
 

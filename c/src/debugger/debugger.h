@@ -3,9 +3,9 @@
 
 #include <stddef.h> // size_t
 
-#include "vec.h"         // Vec
-#include "arg-parser.h"  // Args
-#include "interpreter.h" // Interpreter
+#include "../tools/vec.h"        // Vec
+#include "../arg-parser.h"       // Args
+#include "../code/interpreter.h" // Interpreter
 
 typedef struct {
     Interpreter *itpt;

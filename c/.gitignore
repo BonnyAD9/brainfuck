@@ -1,6 +1,7 @@
 dep.d
 brainfuck
-obj/
+obj
+bin
 res
 test.c
 *.out

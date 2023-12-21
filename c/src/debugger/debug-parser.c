@@ -3,9 +3,9 @@
 #include <string.h> // strcmp
 #include <ctype.h>  // isspace
 
-#include "debugger.h" // Debugger
-#include "err.h"      // print_err
-#include "parsers.h"  // parse_size
+#include "../tools/err.h"     // print_err
+#include "../tools/parsers.h" // parse_size
+#include "debugger.h"         // Debugger
 
 static DbgStepCmd parse_step(char **args);
 

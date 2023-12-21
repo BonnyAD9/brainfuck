@@ -1,9 +1,9 @@
 #ifndef INTERPRETER_H_INCLUDED
 #define INTERPRETER_H_INCLUDED
 
-#include "vec.h"         // Vec
-#include "arg-parser.h"  // Args
-#include "instruction.h" // Instruction
+#include "../tools/vec.h"  // Vec
+#include "../arg-parser.h" // Args
+#include "instruction.h"   // Instruction
 
 typedef struct {
     Vec code;

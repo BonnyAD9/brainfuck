@@ -3,8 +3,8 @@
 #include <string.h> // strcmp, size_t
 #include <stdlib.h> // strtoull, strtoul
 
-#include "err.h"     // IS_ERR
-#include "parsers.h" // parse_size
+#include "tools/err.h"     // IS_ERR
+#include "tools/parsers.h" // parse_size
 
 Args arg_parse(char **argv) {
     Args res = {

@@ -3,8 +3,8 @@
 #include <stdio.h>   // FILE, EOF
 #include <stdbool.h> // bool, false
 
-#include "vec.h" // Vec, VEC_NEW, VEC_PUSH
-#include "err.h" // set_err_msg, GENERIC_ERR, EPROP
+#include "../tools/vec.h" // Vec, VEC_NEW, VEC_PUSH
+#include "../tools/err.h" // set_err_msg, GENERIC_ERR, EPROP
 
 static Instruction inst_s_file_next(FILE *in);
 static void noop(void *_) {};

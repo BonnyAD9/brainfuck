@@ -3,8 +3,8 @@
 #include <stdlib.h>  // malloc, free
 #include <stdbool.h> // bool, true, false
 
-#include "instruction.h" // InstructionSteam, Instruction, InstFlags::*
-#include "err.h"         // set_err_msg, FAILED_ALLOC
+#include "../tools/err.h" // set_err_msg, FAILED_ALLOC
+#include "instruction.h"  // InstructionSteam, Instruction, InstFlags::*
 
 typedef struct {
     InstructionStream is;

@@ -4,12 +4,12 @@
 #include <string.h> // strmcp
 #include <stdlib.h> // system
 
-#include "vec.h"           // Vec, VEC_NEW, VEC_EXTEND_EXACT
-#include "ansi-terminal.h" // FG_*
-#include "err.h"           // IS_ERR
-#include "instruction.h"   // inst_print, Instruction
-#include "debug-parser.h"  // DbgCmd, DbgAct::*
-#include "debug-ui.h"      // dbg_ui_*
+#include "../tools/vec.h"           // Vec, VEC_NEW, VEC_EXTEND_EXACT
+#include "../tools/ansi-terminal.h" // FG_*
+#include "../tools/err.h"           // IS_ERR
+#include "../code/instruction.h"    // inst_print, Instruction
+#include "debug-parser.h"           // DbgCmd, DbgAct::*
+#include "debug-ui.h"               // dbg_ui_*
 
 static void dbg_clear(Debugger *dbg);
 static void dbg_list(Debugger *dbg);

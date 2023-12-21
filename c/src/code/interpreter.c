@@ -1,8 +1,8 @@
 #include "interpreter.h"
 
-#include "vec.h"         // Vec, VEC_AT
-#include "instruction.h" // Instruction, InstFlags::*
-#include "err.h"         // IS_ERR
+#include "../tools/vec.h" // Vec, VEC_AT
+#include "../tools/err.h" // IS_ERR
+#include "instruction.h"  // Instruction, InstFlags::*
 
 static inline void _itpt_inst(Interpreter *itpt);
 

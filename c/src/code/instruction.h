@@ -5,7 +5,7 @@
 #include <stdio.h>   // FILE
 #include <stdbool.h> // bool
 
-#include "vec.h" // Vec
+#include "../tools/vec.h" // Vec
 
 typedef enum {
     INST_NONE  = 0x00,

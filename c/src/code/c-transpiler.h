@@ -4,7 +4,7 @@
 #include <stdio.h>   // FILE
 #include <stdbool.h> // bool
 
-#include "vec.h" // Vec
+#include "../tools/vec.h" // Vec
 
 void c_transpile(FILE *out, const Vec instructions, size_t tape_size);
 

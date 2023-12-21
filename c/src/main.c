@@ -1,15 +1,15 @@
 #include <stdio.h>  // FILE, fopen, fclose
 #include <stdlib.h> // EXIT_FAILURE
 
-#include "instruction.h"   // read_instructions, Instruction, inst_s_file
-#include "interpreter.h"   // interpret
-#include "vec.h"           // Vec, VEC_NEW, vec_free, VEC_EXTEND_EXACT
-#include "err.h"           // EPRINTF, IS_ERR
-#include "optimizer.h"     // o_acc_stream
-#include "ansi-terminal.h" // FG_*, SET_*, RESET
-#include "arg-parser.h"    // Args, arg_parse, args_print
-#include "c-transpiler.h"  // c_transpile
-#include "debugger.h"      // dbg_init, dbg_start
+#include "code/instruction.h"   // read_instructions, Instruction, inst_s_file
+#include "code/interpreter.h"   // interpret
+#include "code/optimizer.h"     // o_acc_stream
+#include "code/c-transpiler.h"  // c_transpile
+#include "tools/vec.h"          // Vec, VEC_NEW, vec_free, VEC_EXTEND_EXACT
+#include "tools/err.h"          // EPRINTF, IS_ERR
+#include "tools/ansi-terminal.h"// FG_*, SET_*, RESET
+#include "debugger/debugger.h"  // dbg_init, dbg_start
+#include "arg-parser.h"         // Args, arg_parse, args_print
 
 void handle_interpret(Vec code, Args *args);
 void handle_transpile(const Vec code, Args *args);
