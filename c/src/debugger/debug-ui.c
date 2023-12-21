@@ -70,21 +70,47 @@ void dbg_ui_list_code(Debugger *dbg) {
     size_t d_start = d_diff == 0 ? start : start - d_diff + 5;
     D_MOVE_RIGHT(d_diff);
 
+    // print the code indexes
+    printf(FG_DARK_GRAY);
     for (size_t i = d_start; i < end; i += 5) {
-        printf(SAVE_CURSOR "%zu" RESTORE_CURSOR MOVE_RIGHT(5), i);
+        if (i != dbg->itpt->code_index) {
+            printf(SAVE_CURSOR "%zu" RESTORE_CURSOR MOVE_RIGHT(5), i);
+            continue;
+        }
+        printf(
+            SAVE_CURSOR
+            FG_DARK_YELLOW
+            "%zu"
+            RESET
+            RESTORE_CURSOR
+            MOVE_RIGHT(5),
+            i
+        );
     }
-
-    printf("\n");
-
-    for (size_t i = start; i < end; ++i) {
-        inst_print(VEC_AT(Instruction, dbg->itpt->code, i));
-    }
+    printf(RESET "\n");
 
     size_t screen_index = dbg->itpt->code_index - start;
 
+    // print the instructions
+    for (size_t i = start; i < end; ++i) {
+        if (i == screen_index) {
+            printf(FG_YELLOW);
+            inst_print(VEC_AT(Instruction, dbg->itpt->code, i));
+            printf(RESET);
+            continue;
+        }
+        if (i % 5 == 0) {
+            printf(FG_WHITE);
+            inst_print(VEC_AT(Instruction, dbg->itpt->code, i));
+            printf(RESET);
+            continue;
+        }
+        inst_print(VEC_AT(Instruction, dbg->itpt->code, i));
+    }
+
     printf("\n");
     D_MOVE_RIGHT(screen_index);
-    printf("^\n");
+    printf(FG_YELLOW "^\n" RESET);
 }
 
 void dbg_ui_list_tape(Debugger *dbg) {
@@ -103,15 +129,26 @@ void dbg_ui_list_tape(Debugger *dbg) {
         c_start = c_diff > c_start ? 0 : c_start - c_diff;
     }
 
+    size_t vis_index = dbg->itpt->tape_index - c_start;
+
+    // print the tape values
     for (size_t i = c_start; i < c_end; ++i) {
-        printf("%02x ", (int)VEC_AT(unsigned char, dbg->itpt->tape, i));
+        if (i != vis_index) {
+            printf("%02x ", (int)VEC_AT(unsigned char, dbg->itpt->tape, i));
+            continue;
+        }
+        printf(
+            FG_YELLOW "%02x" RESET " ",
+            (int)VEC_AT(unsigned char, dbg->itpt->tape, i)
+        );
     }
 
-    size_t screen_index = (dbg->itpt->tape_index - c_start) * i_len;
+    size_t screen_index = vis_index * i_len;
 
+    // print the tape pointer
     printf("\n");
     D_MOVE_RIGHT(screen_index);
-    printf("^\n");
+    printf(FG_YELLOW "^\n" RESET);
 }
 
 void dbg_ui_help(Debugger *dbg) {
