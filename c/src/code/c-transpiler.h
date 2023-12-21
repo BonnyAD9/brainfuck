@@ -1,5 +1,5 @@
-#ifndef C_TRANSPILER_INCLUDED
-#define C_TRANSPILER_INCLUDED
+#ifndef CODE_C_TRANSPILER_INCLUDED
+#define CODE_C_TRANSPILER_INCLUDED
 
 #include <stdio.h>   // FILE
 #include <stdbool.h> // bool
@@ -8,4 +8,4 @@
 
 void c_transpile(FILE *out, const Vec instructions, size_t tape_size);
 
-#endif // C_TRANSPILER_INCLUDED
+#endif // CODE_C_TRANSPILER_INCLUDED

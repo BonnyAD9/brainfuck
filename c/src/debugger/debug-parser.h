@@ -1,5 +1,5 @@
-#ifndef DEBUG_PARSER_H_INCLUDED
-#define DEBUG_PARSER_H_INCLUDED
+#ifndef DEBUGGER_DEBUG_PARSER_H_INCLUDED
+#define DEBUGGER_DEBUG_PARSER_H_INCLUDED
 
 #include "debugger.h" // Debugger
 
@@ -31,4 +31,4 @@ typedef struct {
 
 DbgCmd dbg_parse_cmd(Debugger *dbg);
 
-#endif // DEBUG_PARSER_H_INCLUDED
+#endif // DEBUGGER_DEBUG_PARSER_H_INCLUDED

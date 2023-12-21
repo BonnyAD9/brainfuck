@@ -1,5 +1,5 @@
-#ifndef VEC_H_INCLUDED
-#define VEC_H_INCLUDED
+#ifndef TOOLS_VEC_H_INCLUDED
+#define TOOLS_VEC_H_INCLUDED
 
 #include <stddef.h>  // size_t
 #include <stdbool.h> // bool
@@ -81,4 +81,4 @@ bool vec_extend_exact(Vec *vec, size_t len, void *item);
 /// Frees all data allocated by the vector
 void vec_free(Vec *vec);
 
-#endif // VEC_H_INCLUDED
+#endif // TOOLS_VEC_H_INCLUDED

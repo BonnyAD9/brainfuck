@@ -1,5 +1,5 @@
-#ifndef INTERPRETER_H_INCLUDED
-#define INTERPRETER_H_INCLUDED
+#ifndef CODE_INTERPRETER_H_INCLUDED
+#define CODE_INTERPRETER_H_INCLUDED
 
 #include "../tools/vec.h"  // Vec
 #include "../arg-parser.h" // Args
@@ -22,4 +22,4 @@ void itpt_inst(Interpreter *itpt);
 
 
 
-#endif // INTERPRETER_H_INCLUDED
+#endif // CODE_INTERPRETER_H_INCLUDED

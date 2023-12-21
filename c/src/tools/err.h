@@ -1,5 +1,5 @@
-#ifndef ERR_H_INCLUDED
-#define ERR_H_INCLUDED
+#ifndef TOOLS_ERR_H_INCLUDED
+#define TOOLS_ERR_H_INCLUDED
 
 #include <stdio.h> // fprintf, stderr, FILE
 
@@ -60,4 +60,4 @@ int print_err(const char *str, ...);
 
 void err_print_info(FILE *out);
 
-#endif // ERR_H_INCLUDED
+#endif // TOOLS_ERR_H_INCLUDED

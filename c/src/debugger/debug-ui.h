@@ -1,5 +1,5 @@
-#ifndef DEBUG_UI_H_INCLUDED
-#define DEBUG_UI_H_INCLUDED
+#ifndef DEBUGGER_DEBUG_UI_H_INCLUDED
+#define DEBUGGER_DEBUG_UI_H_INCLUDED
 
 #include "debugger.h" // Debugger
 
@@ -13,4 +13,4 @@ void dbg_ui_list_tape(Debugger *dbg);
 
 void dbg_ui_help(Debugger *dbg);
 
-#endif // DEBUG_UI_H_INCLUDED
+#endif // DEBUGGER_DEBUG_UI_H_INCLUDED

@@ -1,5 +1,5 @@
-#ifndef DEBUGGER_H_INCLUDED
-#define DEBUGGER_H_INCLUDED
+#ifndef DEBUGGER_DEBUGGER_H_INCLUDED
+#define DEBUGGER_DEBUGGER_H_INCLUDED
 
 #include <stddef.h> // size_t
 
@@ -20,4 +20,4 @@ void dbg_free(Debugger *dbg);
 
 void dbg_start(Debugger *dbg);
 
-#endif // DEBUGGER_H_INCLUDED
+#endif // DEBUGGER_DEBUGGER_H_INCLUDED

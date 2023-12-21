@@ -1,5 +1,5 @@
-#ifndef ANSI_COLORS_H_INCLUDED
-#define ANSI_COLORS_H_INCLUDED
+#ifndef TOOLS_ANSI_COLORS_H_INCLUDED
+#define TOOLS_ANSI_COLORS_H_INCLUDED
 
 #include <stdio.h> // printf
 
@@ -104,4 +104,4 @@
 
 void repeat(FILE *out, char c, size_t amount);
 
-#endif // ANSI_COLORS_H_INCLUDED
+#endif // TOOLS_ANSI_COLORS_H_INCLUDED

@@ -1,8 +1,8 @@
-#ifndef PARSERS_H_INCLUDED
-#define PARSERS_H_INCLUDED
+#ifndef TOOLS_PARSERS_H_INCLUDED
+#define TOOLS_PARSERS_H_INCLUDED
 
 #include <stddef.h> // size_t
 
 size_t parse_size(char *str);
 
-#endif //PARSERS_H_INCLUDED
+#endif // TOOLS_PARSERS_H_INCLUDED

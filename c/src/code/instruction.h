@@ -1,5 +1,5 @@
-#ifndef INSTRUCTION_H_INCLUDED
-#define INSTRUCTION_H_INCLUDED
+#ifndef CODE_INSTRUCTION_H_INCLUDED
+#define CODE_INSTRUCTION_H_INCLUDED
 
 #include <stddef.h>  // size_t
 #include <stdio.h>   // FILE
@@ -47,4 +47,4 @@ void inst_print(Instruction inst);
 /// Loads instructions from stream `is` into vector `out`
 bool read_instructions(InstructionStream is, Vec *out);
 
-#endif // INSTRUCTION_H_INCLUDED
+#endif // CODE_INSTRUCTION_H_INCLUDED

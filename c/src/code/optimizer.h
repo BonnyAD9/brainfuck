@@ -1,5 +1,5 @@
-#ifndef OPTIMIZER_H_INCLUDED
-#define OPTIMIZER_H_INCLUDED
+#ifndef CODE_OPTIMIZER_H_INCLUDED
+#define CODE_OPTIMIZER_H_INCLUDED
 
 #include "instruction.h" // InstructionSteam
 
@@ -7,4 +7,4 @@
 /// together
 InstructionStream o_acc_stream(InstructionStream is);
 
-#endif // OPTIMIZER_H_INCLUDED
+#endif // CODE_OPTIMIZER_H_INCLUDED
