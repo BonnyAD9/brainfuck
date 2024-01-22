@@ -2,9 +2,9 @@
     "version": "2.0.0",
     "tasks": [
         {
-            "label": "Makefile",
+            "label": "ccpp",
             "type": "shell",
-            "command": "make",
+            "command": "ccpp build",
         }
     ]
 }

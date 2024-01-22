@@ -5,10 +5,10 @@
             "type": "lldb",
             "request": "launch",
             "name": "Debug",
-            "program": "${workspaceFolder}/brainfuck",
+            "program": "${workspaceFolder}/bin/debug/brainfuck",
             "args": [ "-D", "../speed-test.b" ],
             "cwd": "${workspaceFolder}",
-            "preLaunchTask": "Makefile",
+            "preLaunchTask": "ccpp",
             "env": {
                 "ASAN_OPTIONS": "detect_leaks=0"
             }
