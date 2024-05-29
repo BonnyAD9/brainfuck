@@ -46,6 +46,7 @@ int main(int argc, char **argv) {
         return print_err(NULL);
     }
 
+    // enable simple optimizations when not in debug mode
     if (args.action != DEBUG) {
         is = o_acc_stream(is);
         if (IS_ERR) {

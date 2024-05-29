@@ -38,6 +38,7 @@ void itpt_all(Interpreter *itpt) {
     const size_t tlen = itpt->tape.len;
     Instruction *restrict const code = (Instruction *)itpt->code.data;
     unsigned char *restrict const tape = (unsigned char *)itpt->tape.data;
+    Stream *restrict const input = &itpt->input;
 
     while (ci < clen) {
         Instruction i = code[ci];
@@ -58,7 +59,7 @@ void itpt_all(Interpreter *itpt) {
         }
 
         if (i.flags & INST_READ) {
-            tape[ti] = getchar();
+            tape[ti] = s_get_chr(input);
         }
 
         ++ci;
