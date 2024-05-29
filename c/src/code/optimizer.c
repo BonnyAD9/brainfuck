@@ -9,13 +9,14 @@
 typedef struct {
     InstructionStream is;
     Instruction cur;
+    long tape_size;
 } AccInstStream;
 
 static Instruction acc_stream_next(AccInstStream *is);
 static void acc_stream_free(AccInstStream *is);
 static bool acc_try_join(Instruction *first, Instruction second);
 
-InstructionStream o_acc_stream(InstructionStream is) {
+InstructionStream o_acc_stream(InstructionStream is, size_t tape_size) {
     AccInstStream *ais = malloc(sizeof(*ais));
     if (!ais) {
         is.free(is.data);
@@ -26,6 +27,7 @@ InstructionStream o_acc_stream(InstructionStream is) {
     *ais = (AccInstStream) {
         .is = is,
         .cur = instruction_new(0, 0, INST_NONE, 0),
+        .tape_size = (long)tape_size,
     };
 
     return (InstructionStream) {
@@ -40,6 +42,11 @@ static Instruction acc_stream_next(AccInstStream *is) {
     is->cur = is->is.next(is->is.data);
     while (acc_try_join(&ret, is->cur)) {
         is->cur = is->is.next(is->is.data);
+    }
+    if (ret.move > is->tape_size) {
+        ret.move %= is->tape_size;
+    } else if (ret.move < -is->tape_size) {
+        ret.move = -((-ret.move) % is->tape_size);
     }
     return ret;
 }

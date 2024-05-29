@@ -48,7 +48,7 @@ int main(int argc, char **argv) {
 
     // enable simple optimizations when not in debug mode
     if (args.action != DEBUG) {
-        is = o_acc_stream(is);
+        is = o_acc_stream(is, args.tape_size);
         if (IS_ERR) {
             must(&args);
             return print_err(NULL);

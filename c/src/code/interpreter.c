@@ -44,11 +44,11 @@ void itpt_all(Interpreter *itpt) {
         Instruction i = code[ci];
 
         ti += i.move;
-        // having theese cycles is actually about 11 times faster than using %
-        while (ti >= tlen) {
+        // branching is actually about 11 times faster than using %
+        if (ti >= tlen) {
             ti -= tlen;
         }
-        while (ti < 0) {
+        if (ti < 0) {
             ti += tlen;
         }
 
