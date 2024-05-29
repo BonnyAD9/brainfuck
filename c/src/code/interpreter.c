@@ -44,11 +44,10 @@ void itpt_all(Interpreter *itpt) {
         Instruction i = code[ci];
 
         ti += i.move;
-        // branching is actually about 11 times faster than using %
+        // branching is actually about 4 times faster than using %
         if (ti >= tlen) {
             ti -= tlen;
-        }
-        if (ti < 0) {
+        } else if (ti < 0) {
             ti += tlen;
         }
 
@@ -86,13 +85,9 @@ static inline void _itpt_inst(Interpreter *itpt) {
     itpt->tape_index += i.move;
     // having theese cycles is actually about 11 times faster than using %
     if (itpt->tape_index >= itpt->tape.len) {
-        do {
-            itpt->tape_index -= itpt->tape.len;
-        } while (itpt->tape_index >= itpt->tape.len);
-    } else {
-        while (itpt->tape_index < 0) {
-            itpt->tape_index += itpt->tape.len;
-        }
+        itpt->tape_index -= itpt->tape.len;
+    } else if (itpt->tape_index < 0) {
+        itpt->tape_index += itpt->tape.len;
     }
 
     VEC_AT(unsigned char, itpt->tape, itpt->tape_index) += i.add;
