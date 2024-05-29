@@ -9,6 +9,7 @@ typedef struct {
     size_t idx;
     Vec data;
     Stream input;
+    bool eof;
 } BufStream;
 
 BufStream *bs_new(Stream input, int buf_char);

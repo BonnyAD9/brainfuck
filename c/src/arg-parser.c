@@ -29,9 +29,13 @@ Args arg_parse(char **argv) {
             || strcmp(*argv, "--help") == 0
         ) {
             res.print_help = 1;
-        } else if (strcmp(*argv, "-T") == 0 || strcmp(*argv, "--transpile") == 0) {
+        } else if (
+            strcmp(*argv, "-T") == 0 || strcmp(*argv, "--transpile") == 0
+        ) {
             res.action = TRANSPILE;
-        } else if (strcmp(*argv, "-I") == 0 || strcmp(*argv, "--interpret") == 0) {
+        } else if (
+            strcmp(*argv, "-I") == 0 || strcmp(*argv, "--interpret") == 0
+        ) {
             res.action = INTERPRET;
         } else if (strcmp(*argv, "-D") == 0 || strcmp(*argv, "--debug") == 0) {
             res.action = DEBUG;

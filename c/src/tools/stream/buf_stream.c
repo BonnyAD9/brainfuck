@@ -17,6 +17,7 @@ BufStream *bs_new(Stream input, int buf_char) {
         .idx = 0,
         .data = VEC_NEW(char),
         .input = input,
+        .eof = false,
     };
 
     return res;
@@ -33,8 +34,8 @@ Stream bs_to_stream(BufStream *bs) {
 }
 
 void bs_free(BufStream **s) {
-    *s = NULL;
     BufStream *v = *s;
+    *s = NULL;
     vec_free(&v->data);
     s_free(&v->input);
     free(v);
@@ -45,14 +46,24 @@ int bs_get_char(BufStream *s) {
         return s->data.data[s->idx++];
     }
 
+    if (s->eof) {
+        s->eof = false;
+        return EOF;
+    }
+
     vec_clear(&s->data);
     int c = s->buf_char + 1;
     while (c != s->buf_char && (c = s_get_chr(&s->input)) != EOF) {
         VEC_PUSH(char, &s->data, c);
     }
 
+    if (c == EOF) {
+        s->eof = true;
+    }
+
     if (s->data.len == 0) {
         s->idx = 0;
+        s->eof = false;
         return EOF;
     }
 

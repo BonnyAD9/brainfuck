@@ -14,8 +14,8 @@ typedef struct {
     char *file;
     char *output;
     size_t tape_size;
-    int print_info: 1;
-    int print_help: 1;
+    unsigned print_info: 1;
+    unsigned print_help: 1;
 } Args;
 
 Args arg_parse(char **argv);

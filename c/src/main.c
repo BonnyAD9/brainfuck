@@ -8,6 +8,8 @@
 #include "tools/vec.h"          // Vec, VEC_NEW, vec_free, VEC_EXTEND_EXACT
 #include "tools/err.h"          // EPRINTF, IS_ERR
 #include "tools/ansi-terminal.h"// FG_*, SET_*, RESET
+#include "tools/stream/file_stream.h"
+#include "tools/stream/buf_stream.h"
 #include "debugger/debugger.h"  // dbg_init, dbg_start
 #include "arg-parser.h"         // Args, arg_parse, args_print
 
@@ -85,7 +87,7 @@ void handle_interpret(const Vec code, Args *args) {
         WPRINTF("Unused argument '-o'");
     }
 
-    Interpreter itpt = itpt_init(code, args);
+    Interpreter itpt = itpt_init(code, args, FS_STDIN);
     if (IS_ERR) {
         return;
     }
@@ -107,13 +109,21 @@ void handle_debug(Vec code, Args *args) {
         WPRINTF("Unused argument '-o'");
     }
 
-    Interpreter itpt = itpt_init(code, args);
+    BufStream *stream = bs_new(FS_STDIN, '\n');
     if (IS_ERR) {
+        print_err(NULL);
+        return;
+    }
+
+    Interpreter itpt = itpt_init(code, args, bs_to_stream(stream));
+    if (IS_ERR) {
+        bs_free(&stream);
         print_err(NULL);
         return;
     }
     Debugger dbg = dbg_init(args, &itpt);
     if (IS_ERR) {
+        itpt_free(&itpt);
         print_err(NULL);
         return;
     }

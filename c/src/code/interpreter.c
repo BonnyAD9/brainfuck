@@ -6,7 +6,7 @@
 
 static inline void _itpt_inst(Interpreter *itpt);
 
-Interpreter itpt_init(Vec code, Args *args) {
+Interpreter itpt_init(Vec code, Args *args, Stream input) {
     Vec tape = VEC_NEW(unsigned char);
     VEC_EXTEND_EXACT(unsigned char, &tape, args->tape_size, 0);
     if (IS_ERR) {
@@ -17,6 +17,7 @@ Interpreter itpt_init(Vec code, Args *args) {
         .code_index = 0,
         .tape = tape,
         .tape_index = 0,
+        .input = input,
     };
 }
 
@@ -24,6 +25,7 @@ void itpt_free(Interpreter *itpt) {
     vec_free(&itpt->tape);
     itpt->tape_index = 0;
     itpt->code_index = 0;
+    s_free(&itpt->input);
 }
 
 void itpt_all(Interpreter *itpt) {
@@ -99,13 +101,18 @@ static inline void _itpt_inst(Interpreter *itpt) {
     }
 
     if (i.flags & INST_READ) {
-        VEC_AT(unsigned char, itpt->tape, itpt->tape_index) = getchar();
+        VEC_AT(unsigned char, itpt->tape, itpt->tape_index) =
+            s_get_chr(&itpt->input);
     }
 
     ++itpt->code_index;
-    if (i.jump > 0 && VEC_AT(unsigned char, itpt->tape, itpt->tape_index) == 0) {
+    if (i.jump > 0
+        && VEC_AT(unsigned char, itpt->tape, itpt->tape_index) == 0
+    ) {
         itpt->code_index += i.jump;
-    } else if (i.jump < 0 && VEC_AT(unsigned char, itpt->tape, itpt->tape_index) != 0) {
+    } else if (
+        i.jump < 0 && VEC_AT(unsigned char, itpt->tape, itpt->tape_index) != 0
+    ) {
         itpt->code_index += i.jump;
     }
 }
